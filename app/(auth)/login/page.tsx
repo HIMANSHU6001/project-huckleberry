@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { login, signup } from "@/actions/auth";
 import {
@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { ActionType } from "@/types/auth";
 
 export default function LoginPage() {
+    const [loading, setLoading] = useState(false);
     const form = useForm({
         defaultValues: {
             email: "",
@@ -36,8 +37,9 @@ export default function LoginPage() {
         if (!isValid) return;
 
         const formData = form.getValues();
+        setLoading(true);
         const response = await action(formData);
-
+        setLoading(false);
         if (response.status === "error") {
             console.error(response);
             toast.error(response.error.message || "An error occurred");
@@ -86,10 +88,16 @@ export default function LoginPage() {
                     </Form>
                 </CardContent>
                 <CardFooter className="flex gap-4 justify-end">
-                    <Button variant="outline" onClick={() => onSubmit(signup)}>
-                        Sign up
+                    <Button
+                        variant="outline"
+                        onClick={() => onSubmit(signup)}
+                        disabled={loading}
+                    >
+                        {loading ? "Loading..." : "Sign up"}
                     </Button>
-                    <Button onClick={() => onSubmit(login)}>Log in</Button>
+                    <Button onClick={() => onSubmit(login)} disabled={loading}>
+                        {loading ? "Loading..." : "Log in"}
+                    </Button>
                 </CardFooter>
             </Card>
         </section>
