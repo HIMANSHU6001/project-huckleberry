@@ -89,11 +89,16 @@ const EventsDashboard = () => {
         console.log("Event created:", data);
     };
 
+    const handleClose = () => {
+        setOpen(false);
+        setCurrentEvent(null);
+    };
+
     return (
         <div className="p-8">
             <EventRegistrationModal
                 open={open}
-                onOpenChange={setOpen}
+                onOpenChange={handleClose}
                 onSubmit={handleSubmit}
                 defaultValues={currentEvent}
                 isEditing={Boolean(currentEvent)}
