@@ -98,7 +98,7 @@ const EventRegistrationModal = ({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
-                className="max-w-2xl"
+                className="max-w-2xl font-geist-sans"
                 style={{ width: "100%", maxHeight: "95dvh", overflowY: "auto" }}
             >
                 <DialogHeader>

@@ -141,7 +141,7 @@ const EventsDashboard = () => {
                     !open && setDeleteDialog({ open, event: null })
                 }
             >
-                <DialogContent>
+                <DialogContent className="font-geist-sans">
                     <DialogHeader>
                         <DialogTitle>Confirm Deletion</DialogTitle>
                         <DialogDescription>
