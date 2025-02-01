@@ -1,6 +1,6 @@
 export type Event = {
     id: string;
-    coverImage: string;
+    coverImage: string | File;
     title: string;
     subTitle?: string;
     description: string;

@@ -28,6 +28,7 @@ interface EventRegistrationModalProps {
     onSubmit: (data: EventRegistration) => void;
     defaultValues?: Partial<EventRegistration> | null;
     isEditing?: boolean;
+    isLoading?: boolean;
 }
 const EventRegistrationModal = ({
     open,
@@ -35,6 +36,7 @@ const EventRegistrationModal = ({
     onSubmit,
     defaultValues,
     isEditing = false,
+    isLoading = false,
 }: EventRegistrationModalProps) => {
     const form = useForm<EventRegistration>({
         values: getInitialValues(defaultValues),
@@ -46,8 +48,6 @@ const EventRegistrationModal = ({
             timestamp: new Date(data.timestamp).getTime().toString(),
         };
         onSubmit(formattedData);
-        onOpenChange(false);
-        form.reset();
     };
 
     const renderFormField = (field: FieldConfig) => {
@@ -106,7 +106,7 @@ const EventRegistrationModal = ({
                         </div>
 
                         <DialogFooter>
-                            <Button type="submit">
+                            <Button type="submit" disabled={isLoading}>
                                 {isEditing ? "Save Changes" : "Create Event"}
                             </Button>
                         </DialogFooter>

@@ -10,10 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { Event } from "@/types/admin/events";
+import { Event, EventRegistration } from "@/types/admin/events";
 import EventRegistrationModal from "@/components/admin/events/create-event";
 import { demoEvents, columns } from "@/config/admin/events";
-import { upsertEvent } from "@/utils";
+import { uploadToCloudinary, upsertEvent, withLoadingToast } from "@/utils";
+
+import { createEvent, updateEvent } from "@/actions/events";
+import { ApiResponse } from "@/types/commons";
 
 const EventsDashboard = () => {
     const [open, setOpen] = useState(false);
@@ -26,6 +29,8 @@ const EventsDashboard = () => {
         open: false,
         event: null,
     });
+
+    const [loading, setLoading] = useState(false);
 
     const handleEdit = (event: Event) => {
         setOpen(true);
@@ -43,12 +48,36 @@ const EventsDashboard = () => {
         setDeleteDialog({ open: false, event: null });
     };
 
-    const handleSubmit = (data: Partial<Event>) => {
-        setEvents((prevEvents) =>
-            upsertEvent(prevEvents, data, currentEvent?.id)
-        );
-        console.log("Event created:", data);
-    };
+    const handleSubmit = withLoadingToast(
+        async (data: Partial<Event>): Promise<ApiResponse> => {
+            setLoading(true);
+
+            const coverImage = data?.coverImage?.[0]
+                ? await uploadToCloudinary(data.coverImage[0])
+                : null;
+
+            const eventData: EventRegistration = {
+                ...data,
+                coverImage,
+            } as EventRegistration;
+            const result = currentEvent
+                ? await updateEvent(currentEvent.id, eventData)
+                : await createEvent(eventData);
+
+            if (result.status === "success") {
+                setEvents((prevEvents) =>
+                    upsertEvent(prevEvents, data, currentEvent?.id)
+                );
+                setOpen(false);
+                setCurrentEvent(null);
+            }
+
+            console.log(result);
+            setLoading(false);
+
+            return result;
+        }
+    );
 
     const handleClose = () => {
         setOpen(false);
@@ -63,6 +92,7 @@ const EventsDashboard = () => {
                 onSubmit={handleSubmit}
                 defaultValues={currentEvent}
                 isEditing={Boolean(currentEvent)}
+                isLoading={loading}
             />
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Events Dashboard</h1>
