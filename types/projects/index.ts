@@ -11,18 +11,13 @@ export interface GitHubRepo {
   updated_at: string;
   pushed_at: string;
   forks: number;
-  latestCommit?: GitHubCommit | null;
+  contributors: GitHubContributor[];
 }
 
 
-export interface GitHubCommit {
-  sha: string;
-  commit: {
-    message: string;
-    author: {
-      name: string;
-      date: string;
-    };
-  };
-  html_url: string;
+export interface GitHubContributor {
+  login: string;
+  id: number;
+  avatar_url: string;
+  contributions: number;
 }
