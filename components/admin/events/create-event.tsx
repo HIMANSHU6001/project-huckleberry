@@ -19,8 +19,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { EventRegistration, FieldConfig } from "@/types/admin/events";
-import { formFields } from "@/config/admin/events";
-import { FormFieldComponent } from "./form-fields";
+import { formFields, getInitialValues } from "@/config/admin/events";
+import { getFieldComponent } from "./form-fields";
 
 interface EventRegistrationModalProps {
     open: boolean;
@@ -29,22 +29,6 @@ interface EventRegistrationModalProps {
     defaultValues?: Partial<EventRegistration> | null;
     isEditing?: boolean;
 }
-
-const getInitialValues = (
-    defaultValues?: Partial<EventRegistration> | null
-): EventRegistration => ({
-    title: defaultValues?.title || "",
-    subTitle: defaultValues?.subTitle || "",
-    description: defaultValues?.description || "",
-    location: defaultValues?.location || "",
-    mode: defaultValues?.mode || "offline",
-    eligibility: defaultValues?.eligibility || "",
-    timestamp: defaultValues?.timestamp
-        ? new Date(defaultValues.timestamp).toISOString().slice(0, 16)
-        : "",
-    coverImage: defaultValues?.coverImage || "",
-});
-
 const EventRegistrationModal = ({
     open,
     onOpenChange,
@@ -67,10 +51,6 @@ const EventRegistrationModal = ({
     };
 
     const renderFormField = (field: FieldConfig) => {
-        const FieldComponent =
-            FormFieldComponent[field.type as keyof typeof FormFieldComponent] ||
-            FormFieldComponent.default;
-
         return (
             <div
                 key={field.name}
@@ -79,18 +59,20 @@ const EventRegistrationModal = ({
                 <FormField
                     control={form.control}
                     name={field.name}
+                    // @ts-ignore
                     rules={field.rules}
                     render={({ field: formField }) => (
                         <FormItem>
                             <FormLabel>{field.label}</FormLabel>
                             <FormControl>
-                                <FieldComponent
-                                    {...formField}
-                                    placeholder={field.placeholder}
-                                    type={field.type}
-                                    options={field.options}
-                                    label={field.label}
-                                />
+                                {getFieldComponent(field.type)({
+                                    ...formField,
+                                    placeholder: field.placeholder,
+                                    type: field.type,
+                                    options: field.options,
+                                    label: field.label,
+                                    accept: field.accept,
+                                })}
                             </FormControl>
                             <FormMessage />
                         </FormItem>

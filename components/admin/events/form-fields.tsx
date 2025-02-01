@@ -9,21 +9,51 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
+interface BaseFieldProps {
+    placeholder?: string;
+    className?: string;
+    disabled?: boolean;
+}
+
+interface SelectFieldProps extends BaseFieldProps {
+    onChange: (value: string) => void;
+    value: string;
+    options: { label: string; value: string }[];
+    label: string;
+}
+
+interface FileFieldProps extends BaseFieldProps {
+    onChange: (value: FileList | null) => void;
+    value?: FileList | null;
+    accept?: string;
+    type: "file";
+}
+
 export const FormFieldComponent = {
-    textarea: (props: any) => (
-        <Textarea className="min-h-[100px] resize-none" {...props} />
+    textarea: ({ className = "", ...props }) => (
+        <Textarea
+            className={`min-h-[100px] resize-none ${className}`}
+            {...props}
+        />
     ),
-    select: ({ onChange, value, options, label }: any) => (
+
+    select: ({
+        onChange,
+        value,
+        options,
+        label,
+        className = "",
+    }: SelectFieldProps) => (
         <Select onValueChange={onChange} defaultValue={value}>
             <FormControl>
-                <SelectTrigger>
+                <SelectTrigger className={className}>
                     <SelectValue
                         placeholder={`Select ${label.toLowerCase()}`}
                     />
                 </SelectTrigger>
             </FormControl>
             <SelectContent>
-                {options?.map((option: any) => (
+                {options?.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                         {option.label}
                     </SelectItem>
@@ -31,5 +61,25 @@ export const FormFieldComponent = {
             </SelectContent>
         </Select>
     ),
-    default: (props: any) => <Input {...props} />,
+
+    file: ({ onChange, accept, className = "" }: FileFieldProps) => (
+        <Input
+            type="file"
+            onChange={(e) => {
+                const files = e.target.files;
+                onChange(files);
+            }}
+            accept={accept}
+            className={`cursor-pointer ${className}`}
+        />
+    ),
+
+    default: (props) => <Input {...props} />,
+};
+
+export const getFieldComponent = (type: string) => {
+    return (
+        FormFieldComponent[type as keyof typeof FormFieldComponent] ||
+        FormFieldComponent.default
+    );
 };

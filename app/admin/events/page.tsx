@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Event } from "@/types/admin/events";
 import EventRegistrationModal from "@/components/admin/events/create-event";
 import { demoEvents, columns } from "@/config/admin/events";
+import { upsertEvent } from "@/utils";
 
 const EventsDashboard = () => {
     const [open, setOpen] = useState(false);
@@ -43,23 +44,9 @@ const EventsDashboard = () => {
     };
 
     const handleSubmit = (data: Partial<Event>) => {
-        setEvents([
-            ...events,
-            {
-                ...data,
-                id: String(events.length + 1),
-                coverImage: data.coverImage || "",
-                title: data.title || "",
-                subTitle: data.subTitle || "",
-                description: data.description || "",
-                location: data.location || "",
-                mode: data.mode || "offline",
-                eligibility: data.eligibility || "",
-                timestamp: data.timestamp
-                    ? new Date(data.timestamp).getTime()
-                    : Date.now(),
-            },
-        ]);
+        setEvents((prevEvents) =>
+            upsertEvent(prevEvents, data, currentEvent?.id)
+        );
         console.log("Event created:", data);
     };
 

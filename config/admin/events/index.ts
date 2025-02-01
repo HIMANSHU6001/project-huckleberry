@@ -1,4 +1,4 @@
-import { FieldConfig } from "@/types/admin/events";
+import { EventRegistration, FieldConfig } from "@/types/admin/events";
 
 export const formFields: FieldConfig[] = [
     {
@@ -56,13 +56,49 @@ export const formFields: FieldConfig[] = [
     },
     {
         name: "coverImage",
-        label: "Cover Image URL",
-        type: "text",
-        placeholder: "Image URL",
-        rules: { required: "Cover image URL is required" },
+        label: "Cover Image",
+        type: "file",
+        accept: "image/*",
+        // @ts-expect-error - validation rules
+        rules: {
+            required: "Cover image is required",
+            validate: {
+                fileType: (value: FileList) => {
+                    if (!value?.[0]) return true;
+                    const validTypes = ["image/jpeg", "image/png", "image/gif"];
+                    return (
+                        validTypes.includes(value[0].type) ||
+                        "Please upload an image file (JPG, PNG, GIF)"
+                    );
+                },
+                fileSize: (value: FileList) => {
+                    if (!value?.[0]) return true;
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    return (
+                        value[0].size <= maxSize ||
+                        "File size should be less than 5MB"
+                    );
+                },
+            },
+        },
         fullWidth: true,
     },
 ];
+
+export const getInitialValues = (
+    defaultValues?: Partial<EventRegistration> | null
+): EventRegistration => ({
+    title: defaultValues?.title || "",
+    subTitle: defaultValues?.subTitle || "",
+    description: defaultValues?.description || "",
+    location: defaultValues?.location || "",
+    mode: defaultValues?.mode || "offline",
+    eligibility: defaultValues?.eligibility || "",
+    timestamp: defaultValues?.timestamp
+        ? new Date(defaultValues.timestamp).toISOString().slice(0, 16)
+        : "",
+    coverImage: defaultValues?.coverImage || "",
+});
 
 export const demoEvents = [
     {
