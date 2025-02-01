@@ -1,6 +1,6 @@
 "use server";
 import { Event } from "@/types/admin/events";
-import { EventOperationError, handleError, handleSuccess } from "@/utils";
+import { handleError, handleSuccess } from "@/utils";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -10,16 +10,14 @@ const supabase = createClient(
 
 export async function createEvent(event: Omit<Event, "id">) {
     try {
-        console.log("Creating event");
-
         const { data, error } = await supabase
             .from("events")
             .insert(event)
             .select()
             .single();
+        console.log(data, error);
 
-        if (error) throw new EventOperationError(error.message, 400);
-
+        if (error) return handleError(error);
         return handleSuccess({
             ...data,
             message: "Event created successfully",
@@ -31,14 +29,13 @@ export async function createEvent(event: Omit<Event, "id">) {
 
 export async function getEvent(id: string) {
     try {
-        const { data, error } = await supabase
+        const { data } = await supabase
             .from("events")
             .select()
             .eq("id", id)
             .single();
 
-        if (error) throw new EventOperationError(error.message, 404);
-        if (!data) throw new EventOperationError("Event not found", 404);
+        if (!data) return handleError({ message: "Event not found" });
 
         return handleSuccess(data);
     } catch (error) {
@@ -55,9 +52,7 @@ export async function updateEvent(id: string, updates: Partial<Event>) {
             .select()
             .single();
 
-        if (error) throw new EventOperationError(error.message, 400);
-        if (!data) throw new EventOperationError("Event not found", 404);
-
+        if (error) return handleError(error);
         return handleSuccess({
             ...data,
             message: "Event updated successfully",
@@ -71,8 +66,7 @@ export async function deleteEvent(id: string) {
     try {
         const { error } = await supabase.from("events").delete().eq("id", id);
 
-        if (error) throw new EventOperationError(error.message, 400);
-
+        if (error) return handleError(error);
         return handleSuccess({ message: "Event deleted successfully" });
     } catch (error) {
         return handleError(error);
@@ -86,7 +80,7 @@ export async function getAllEvents() {
             .select()
             .order("timestamp", { ascending: false });
 
-        if (error) throw new EventOperationError(error.message, 400);
+        if (error) return handleError(error);
 
         return handleSuccess({ data, message: null });
     } catch (error) {
