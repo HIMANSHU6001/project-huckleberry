@@ -1,6 +1,4 @@
 export const formatTimestamp = (timestamp: string | number): string => {
-    console.log(timestamp);
-
     const date = new Date(Number(timestamp));
     if (isNaN(date.getTime())) return "Invalid Date";
 

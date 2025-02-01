@@ -15,7 +15,6 @@ export async function createEvent(event: Omit<Event, "id">) {
             .insert(event)
             .select()
             .single();
-        console.log(data, error);
 
         if (error) return handleError(error);
         return handleSuccess({

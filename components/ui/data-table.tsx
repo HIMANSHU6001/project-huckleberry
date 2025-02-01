@@ -56,12 +56,12 @@ export const DataTable = <T extends { id: string }>({
 
     return (
         <div className="space-y-4">
-            <Input
+            {/* <Input
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="max-w-sm"
-            />
+            /> */}
             <Table>
                 <TableHeader>
                     <TableRow>

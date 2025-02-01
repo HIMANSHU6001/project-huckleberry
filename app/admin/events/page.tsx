@@ -58,9 +58,10 @@ const EventsDashboard = () => {
         async (data: Partial<Event>): Promise<ApiResponse> => {
             setLoading(true);
 
-            const coverImage = data?.coverImage?.[0]
-                ? await uploadToCloudinary(data.coverImage[0])
-                : null;
+            const coverImage =
+                data?.coverImage?.[0] instanceof File
+                    ? await uploadToCloudinary(data.coverImage[0])
+                    : data?.coverImage;
 
             const eventData: EventRegistration = {
                 ...data,

@@ -63,7 +63,8 @@ export const formFields: FieldConfig[] = [
         // @ts-expect-error - validation rules
         rules: {
             validate: {
-                fileType: (value: FileList) => {
+                fileType: (value: FileList | string) => {
+                    if (typeof value === "string") return true; // Accept existing URL
                     if (!value?.[0]) return true;
                     const validTypes = ["image/jpeg", "image/png", "image/gif"];
                     return (
@@ -71,7 +72,8 @@ export const formFields: FieldConfig[] = [
                         "Please upload an image file (JPG, PNG, GIF)"
                     );
                 },
-                fileSize: (value: FileList) => {
+                fileSize: (value: FileList | string) => {
+                    if (typeof value === "string") return true; // Accept existing URL
                     if (!value?.[0]) return true;
                     const maxSize = 5 * 1024 * 1024; // 5MB
                     return (

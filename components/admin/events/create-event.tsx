@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { EventRegistration, FieldConfig } from "@/types/admin/events";
 import { formFields, getInitialValues } from "@/config/admin/events";
 import { getFieldComponent } from "./form-fields";
+import Image from "next/image";
 
 interface EventRegistrationModalProps {
     open: boolean;
@@ -51,6 +52,7 @@ const EventRegistrationModal = ({
     };
 
     const renderFormField = (field: FieldConfig) => {
+        const coverImage = form.getValues().coverImage as string;
         return (
             <div
                 key={field.name}
@@ -78,13 +80,27 @@ const EventRegistrationModal = ({
                         </FormItem>
                     )}
                 />
+                {field.name === "coverImage" &&
+                    typeof coverImage === "string" &&
+                    coverImage && (
+                        <Image
+                            src={coverImage}
+                            alt={field.label}
+                            width={200}
+                            height={200}
+                            className="rounded-lg mt-2 w-full h-52 object-cover"
+                        />
+                    )}
             </div>
         );
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent
+                className="max-w-2xl"
+                style={{ width: "100%", maxHeight: "95dvh", overflowY: "auto" }}
+            >
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing ? "Edit Event" : "Create New Event"}
