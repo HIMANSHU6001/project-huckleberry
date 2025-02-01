@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import {
     Dialog,
@@ -17,109 +16,34 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Button } from "@/components/ui/button";
-
-type EventRegistration = {
-    title: string;
-    subTitle: string;
-    description: string;
-    location: string;
-    mode: "offline" | "online" | "hybrid";
-    eligibility: string;
-    timestamp: string;
-    coverImage: string;
-};
-
-type FieldConfig = {
-    name: keyof EventRegistration;
-    label: string;
-    type: "text" | "textarea" | "select" | "datetime-local";
-    placeholder?: string;
-    options?: { label: string; value: string }[];
-    rules?: Record<string, any>;
-    fullWidth?: boolean;
-};
-
-const formFields: FieldConfig[] = [
-    {
-        name: "title",
-        label: "Title",
-        type: "text",
-        placeholder: "Event title",
-        rules: { required: "Title is required" },
-    },
-    {
-        name: "subTitle",
-        label: "Subtitle",
-        type: "text",
-        placeholder: "Event subtitle",
-        rules: { required: "Subtitle is required" },
-    },
-    {
-        name: "description",
-        label: "Description",
-        type: "textarea",
-        placeholder: "Describe your event",
-        rules: { required: "Description is required" },
-        fullWidth: true,
-    },
-    {
-        name: "location",
-        label: "Location",
-        type: "text",
-        placeholder: "Event location",
-        rules: { required: "Location is required" },
-    },
-    {
-        name: "mode",
-        label: "Mode",
-        type: "select",
-        options: [
-            { label: "Offline", value: "offline" },
-            { label: "Online", value: "online" },
-            { label: "Hybrid", value: "hybrid" },
-        ],
-        rules: { required: "Mode is required" },
-    },
-    {
-        name: "timestamp",
-        label: "Date and Time",
-        type: "datetime-local",
-        rules: { required: "Date and time is required" },
-    },
-    {
-        name: "eligibility",
-        label: "Eligibility",
-        type: "text",
-        placeholder: "Who can attend?",
-        rules: { required: "Eligibility is required" },
-    },
-    {
-        name: "coverImage",
-        label: "Cover Image URL",
-        type: "text",
-        placeholder: "Image URL",
-        rules: { required: "Cover image URL is required" },
-        fullWidth: true,
-    },
-];
+import { EventRegistration, FieldConfig } from "@/types/admin/events";
+import { formFields } from "@/config/admin/events";
+import { FormFieldComponent } from "./form-fields";
 
 interface EventRegistrationModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onSubmit: (data: EventRegistration) => void;
-    defaultValues?: Partial<EventRegistration>;
+    defaultValues?: Partial<EventRegistration> | null;
     isEditing?: boolean;
 }
+
+const getInitialValues = (
+    defaultValues?: Partial<EventRegistration> | null
+): EventRegistration => ({
+    title: defaultValues?.title || "",
+    subTitle: defaultValues?.subTitle || "",
+    description: defaultValues?.description || "",
+    location: defaultValues?.location || "",
+    mode: defaultValues?.mode || "offline",
+    eligibility: defaultValues?.eligibility || "",
+    timestamp: defaultValues?.timestamp
+        ? new Date(defaultValues.timestamp).toISOString().slice(0, 16)
+        : "",
+    coverImage: defaultValues?.coverImage || "",
+});
 
 const EventRegistrationModal = ({
     open,
@@ -129,50 +53,24 @@ const EventRegistrationModal = ({
     isEditing = false,
 }: EventRegistrationModalProps) => {
     const form = useForm<EventRegistration>({
-        values: {
-            title: defaultValues?.title || "",
-            subTitle: defaultValues?.subTitle || "",
-            description: defaultValues?.description || "",
-            location: defaultValues?.location || "",
-            mode: defaultValues?.mode || "offline",
-            eligibility: defaultValues?.eligibility || "",
-            timestamp: defaultValues?.timestamp
-                ? new Date(defaultValues.timestamp).toISOString().slice(0, 16)
-                : "",
-            coverImage: defaultValues?.coverImage || "",
-        },
+        values: getInitialValues(defaultValues),
     });
-
-    useEffect(() => {
-        if (defaultValues) {
-            form.reset({
-                title: defaultValues.title || "",
-                subTitle: defaultValues.subTitle || "",
-                description: defaultValues.description || "",
-                location: defaultValues.location || "",
-                mode: defaultValues.mode || "offline",
-                eligibility: defaultValues.eligibility || "",
-                timestamp: defaultValues.timestamp
-                    ? new Date(defaultValues.timestamp)
-                          .toISOString()
-                          .slice(0, 16)
-                    : "",
-                coverImage: defaultValues.coverImage || "",
-            });
-        }
-    }, [defaultValues, form.reset]);
 
     const handleSubmit = (data: EventRegistration) => {
         const formattedData = {
             ...data,
-            timestamp: new Date(data.timestamp).getTime(),
+            timestamp: new Date(data.timestamp).getTime().toString(),
         };
         onSubmit(formattedData);
         onOpenChange(false);
         form.reset();
     };
 
-    const renderField = (field: FieldConfig) => {
+    const renderFormField = (field: FieldConfig) => {
+        const FieldComponent =
+            FormFieldComponent[field.type as keyof typeof FormFieldComponent] ||
+            FormFieldComponent.default;
+
         return (
             <div
                 key={field.name}
@@ -186,42 +84,13 @@ const EventRegistrationModal = ({
                         <FormItem>
                             <FormLabel>{field.label}</FormLabel>
                             <FormControl>
-                                {field.type === "textarea" ? (
-                                    <Textarea
-                                        placeholder={field.placeholder}
-                                        className="min-h-[100px] resize-none"
-                                        {...formField}
-                                    />
-                                ) : field.type === "select" ? (
-                                    <Select
-                                        onValueChange={formField.onChange}
-                                        defaultValue={formField.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue
-                                                    placeholder={`Select ${field.label.toLowerCase()}`}
-                                                />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {field.options?.map((option) => (
-                                                <SelectItem
-                                                    key={option.value}
-                                                    value={option.value}
-                                                >
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                ) : (
-                                    <Input
-                                        type={field.type}
-                                        placeholder={field.placeholder}
-                                        {...formField}
-                                    />
-                                )}
+                                <FieldComponent
+                                    {...formField}
+                                    placeholder={field.placeholder}
+                                    type={field.type}
+                                    options={field.options}
+                                    label={field.label}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -251,7 +120,7 @@ const EventRegistrationModal = ({
                         className="space-y-6"
                     >
                         <div className="grid grid-cols-2 gap-4">
-                            {formFields.map(renderField)}
+                            {formFields.map(renderFormField as any)}
                         </div>
 
                         <DialogFooter>

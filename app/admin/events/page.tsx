@@ -12,31 +12,7 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Event } from "@/types/admin/events";
 import EventRegistrationModal from "@/components/admin/events/create-event";
-
-const demoEvents = [
-    {
-        id: "1",
-        coverImage: "/api/placeholder/400/200",
-        title: "Tech Conference 2025",
-        subTitle: "Future of AI",
-        description: "Join us for an exciting discussion on AI advancement",
-        location: "San Francisco",
-        mode: "hybrid",
-        eligibility: "All tech enthusiasts",
-        timestamp: new Date("2025-03-15T10:00:00").getTime(),
-    },
-    {
-        id: "2",
-        coverImage: "/api/placeholder/400/200",
-        title: "Design Workshop",
-        subTitle: "UI/UX Fundamentals",
-        description: "Learn the basics of UI/UX design",
-        location: "New York",
-        mode: "offline",
-        eligibility: "Beginners welcome",
-        timestamp: new Date("2025-04-20T14:00:00").getTime(),
-    },
-];
+import { demoEvents, columns } from "@/config/admin/events";
 
 const EventsDashboard = () => {
     const [open, setOpen] = useState(false);
@@ -50,27 +26,9 @@ const EventsDashboard = () => {
         event: null,
     });
 
-    const columns = [
-        { key: "title", label: "Title" },
-        { key: "location", label: "Location" },
-        { key: "mode", label: "Mode" },
-        {
-            key: "timestamp",
-            label: "Day and Date",
-            format: (value: string) =>
-                new Date(value).toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                }),
-        },
-    ];
-
     const handleEdit = (event: Event) => {
         setOpen(true);
         setCurrentEvent(event);
-        console.log("Edit event:", event);
     };
 
     const handleDelete = (event: Event) => {
@@ -84,8 +42,24 @@ const EventsDashboard = () => {
         setDeleteDialog({ open: false, event: null });
     };
 
-    const handleSubmit = (data: Event) => {
-        setEvents([...events, { ...data, id: String(events.length + 1) }]);
+    const handleSubmit = (data: Partial<Event>) => {
+        setEvents([
+            ...events,
+            {
+                ...data,
+                id: String(events.length + 1),
+                coverImage: data.coverImage || "",
+                title: data.title || "",
+                subTitle: data.subTitle || "",
+                description: data.description || "",
+                location: data.location || "",
+                mode: data.mode || "offline",
+                eligibility: data.eligibility || "",
+                timestamp: data.timestamp
+                    ? new Date(data.timestamp).getTime()
+                    : Date.now(),
+            },
+        ]);
         console.log("Event created:", data);
     };
 
@@ -95,7 +69,7 @@ const EventsDashboard = () => {
     };
 
     return (
-        <div className="p-8">
+        <div className="p-8 font-geist-sans">
             <EventRegistrationModal
                 open={open}
                 onOpenChange={handleClose}
