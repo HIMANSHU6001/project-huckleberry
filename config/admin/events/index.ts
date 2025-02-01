@@ -1,4 +1,5 @@
 import { EventRegistration, FieldConfig } from "@/types/admin/events";
+import { formatTimestamp, formatTimestampForHTML } from "@/utils";
 
 export const formFields: FieldConfig[] = [
     {
@@ -61,7 +62,6 @@ export const formFields: FieldConfig[] = [
         accept: "image/*",
         // @ts-expect-error - validation rules
         rules: {
-            required: "Cover image is required",
             validate: {
                 fileType: (value: FileList) => {
                     if (!value?.[0]) return true;
@@ -95,35 +95,10 @@ export const getInitialValues = (
     mode: defaultValues?.mode || "offline",
     eligibility: defaultValues?.eligibility || "",
     timestamp: defaultValues?.timestamp
-        ? new Date(defaultValues.timestamp).toISOString().slice(0, 16)
+        ? formatTimestampForHTML(defaultValues.timestamp)
         : "",
     coverImage: defaultValues?.coverImage || "",
 });
-
-export const demoEvents = [
-    {
-        id: "1",
-        coverImage: "/api/placeholder/400/200",
-        title: "Tech Conference 2025",
-        subTitle: "Future of AI",
-        description: "Join us for an exciting discussion on AI advancement",
-        location: "San Francisco",
-        mode: "hybrid",
-        eligibility: "All tech enthusiasts",
-        timestamp: new Date("2025-03-15T10:00:00").getTime(),
-    },
-    {
-        id: "2",
-        coverImage: "/api/placeholder/400/200",
-        title: "Design Workshop",
-        subTitle: "UI/UX Fundamentals",
-        description: "Learn the basics of UI/UX design",
-        location: "New York",
-        mode: "offline",
-        eligibility: "Beginners welcome",
-        timestamp: new Date("2025-04-20T14:00:00").getTime(),
-    },
-];
 
 export const columns = [
     { key: "title", label: "Title" },
@@ -132,12 +107,6 @@ export const columns = [
     {
         key: "timestamp",
         label: "Day and Date",
-        format: (value: string) =>
-            new Date(value).toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-            }),
+        format: (value: string) => formatTimestamp(value),
     },
 ];

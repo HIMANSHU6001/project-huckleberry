@@ -82,7 +82,7 @@ export async function getAllEvents() {
 
         if (error) return handleError(error);
 
-        return handleSuccess({ data, message: null });
+        return handleSuccess({ events: data, message: null });
     } catch (error) {
         return handleError(error);
     }

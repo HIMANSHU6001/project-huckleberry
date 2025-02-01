@@ -9,18 +9,23 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Event, EventRegistration } from "@/types/admin/events";
 import EventRegistrationModal from "@/components/admin/events/create-event";
-import { demoEvents, columns } from "@/config/admin/events";
+import { columns } from "@/config/admin/events";
 import { uploadToCloudinary, upsertEvent, withLoadingToast } from "@/utils";
 
-import { createEvent, updateEvent } from "@/actions/events";
+import {
+    createEvent,
+    updateEvent,
+    getAllEvents,
+    deleteEvent,
+} from "@/actions/events";
 import { ApiResponse } from "@/types/commons";
 
 const EventsDashboard = () => {
     const [open, setOpen] = useState(false);
-    const [events, setEvents] = useState(demoEvents);
+    const [events, setEvents] = useState([] as Event[]);
     const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
     const [deleteDialog, setDeleteDialog] = useState<{
         open: boolean;
@@ -41,8 +46,9 @@ const EventsDashboard = () => {
         setDeleteDialog({ open: true, event });
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         if (deleteDialog.event) {
+            await deleteEvent(deleteDialog.event.id);
             setEvents(events.filter((e) => e.id !== deleteDialog.event?.id));
         }
         setDeleteDialog({ open: false, event: null });
@@ -72,7 +78,6 @@ const EventsDashboard = () => {
                 setCurrentEvent(null);
             }
 
-            console.log(result);
             setLoading(false);
 
             return result;
@@ -83,6 +88,17 @@ const EventsDashboard = () => {
         setOpen(false);
         setCurrentEvent(null);
     };
+
+    useEffect(() => {
+        async function fetchEvents() {
+            const result = await getAllEvents();
+            if (result.status === "success" && "data" in result) {
+                setEvents(result.data.events);
+            }
+        }
+
+        fetchEvents();
+    }, []);
 
     return (
         <div className="p-8 font-geist-sans">
@@ -104,14 +120,19 @@ const EventsDashboard = () => {
                 </Button>
             </div>
 
-            <DataTable
-                // @ts-expect-error - Demo data is not paginated
-                columns={columns}
-                // @ts-expect-error - Demo data is not paginated
-                data={events}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-            />
+            {events.length > 0 ? (
+                <DataTable
+                    // @ts-ignore
+                    columns={columns}
+                    data={events}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
+            ) : (
+                <p className="text-center text-lg text-muted-foreground">
+                    No events found
+                </p>
+            )}
 
             <Dialog
                 open={deleteDialog.open}

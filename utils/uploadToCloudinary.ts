@@ -2,7 +2,6 @@ import axios from "axios";
 
 export const uploadToCloudinary = async (image: File): Promise<string> => {
     if (!(image instanceof File)) {
-        console.log(image);
         throw new Error("Invalid image file.");
     }
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;

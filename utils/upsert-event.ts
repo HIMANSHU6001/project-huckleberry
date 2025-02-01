@@ -5,9 +5,7 @@ export const upsertEvent = (events, data, editingId) => {
                 ? {
                       ...event,
                       ...data,
-                      timestamp: data.timestamp
-                          ? new Date(data.timestamp).getTime()
-                          : event.timestamp,
+                      timestamp: data.timestamp,
                   }
                 : event
         );
@@ -16,7 +14,7 @@ export const upsertEvent = (events, data, editingId) => {
             ...events,
             {
                 ...data,
-                id: String(events.length + 1),
+                id: String(events.length + 2),
                 coverImage: data.coverImage || "",
                 title: data.title || "",
                 subTitle: data.subTitle || "",
@@ -24,9 +22,7 @@ export const upsertEvent = (events, data, editingId) => {
                 location: data.location || "",
                 mode: data.mode || "offline",
                 eligibility: data.eligibility || "",
-                timestamp: data.timestamp
-                    ? new Date(data.timestamp).getTime()
-                    : Date.now(),
+                timestamp: data.timestamp,
             },
         ];
     }
