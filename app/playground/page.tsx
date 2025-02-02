@@ -2,7 +2,10 @@
 import React from "react";
 
 const page = () => {
-  return <div>Playground</div>;
+  return (
+    <div>
+    </div>
+  );
 };
 
 export default page;

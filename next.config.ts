@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
             {
                 hostname: "res.cloudinary.com",
             },
+            {
+                hostname: "cdn-images-1.medium.com",
+            },
         ],
     },
 };
