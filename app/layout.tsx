@@ -3,6 +3,7 @@ import "./globals.css";
 import { geistMono, geistSans } from "./fonts";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import HOC from "@/components/shared/hoc/HOC";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -20,14 +21,7 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <Toaster position="top-right" />
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="dark"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    {children}
-                </ThemeProvider>
+                <HOC>{children}</HOC>
             </body>
         </html>
     );
