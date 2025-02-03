@@ -28,47 +28,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-
-// Database types from Supabase
-interface Member {
-  id: string;
-  created_at: string;
-  profile_photo: string;
-  user_name: string;
-  email: string;
-  mobile_no: number;
-  role: string;
-  github: string;
-  linkedin: string;
-  twitter: string;
-  other_socials: string[];
-  caption: string | null;
-  introduction: string;
-  is_admin: boolean;
-  is_super_admin: boolean;
-}
-
-// Form state type - making id and created_at optional
-type MemberFormData = Omit<Member, "id" | "created_at"> & {
-  id?: string;
-  created_at?: string;
-};
-
-interface MemberRegistrationModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (data: Partial<Member>) => void;
-  defaultValues: Member | null;
-  isEditing?: boolean;
-  isLoading?: boolean;
-}
-
-const roleOptions = [
-  { label: "Developer", value: "developer" },
-  { label: "Designer", value: "designer" },
-  { label: "Product Manager", value: "product_manager" },
-  { label: "Marketing", value: "marketing" },
-];
+import { MemberFormData, MemberRegistrationModalProps } from "@/types/admin/members/supabase";
+import { roleOptions } from "@/config/admin/members/constants";
 
 const MemberRegistrationModal = ({
   open,
@@ -99,7 +60,6 @@ const MemberRegistrationModal = ({
   });
 
   const handleSubmit = (data: MemberFormData) => {
-    // Convert mobile_no to number type and submit
     const formattedData = {
       ...data,
       mobile_no: Number(data.mobile_no),
@@ -285,7 +245,6 @@ const MemberRegistrationModal = ({
                   <FormItem>
                     <FormLabel>Caption</FormLabel>
                     <FormControl>
-                      {/* Ensure value is a string */}
                       <Input {...field} value={field.value || ""} />
                     </FormControl>
                     <FormMessage />
