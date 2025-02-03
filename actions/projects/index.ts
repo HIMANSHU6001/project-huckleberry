@@ -1,19 +1,15 @@
 import { GitHubRepo, GitHubContributor } from '@/types/projects';
 
 const GITHUB_API_URL = 'https://api.github.com';
+const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
 
-export async function fetchContributors(repoFullName: string): Promise<GitHubContributor[]> {
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    throw new Error('GitHub token is not set in environment variables.');
-  }
+async function fetchPaginatedData<T>(url: string, token: string): Promise<T[]> {
+  const results: T[] = [];
+  let nextUrl: string | null = url;
 
-  let contributors: GitHubContributor[] = [];
-  let url = `${GITHUB_API_URL}/repos/${repoFullName}/contributors?per_page=100`;
-
-  while (url) {
+  while (nextUrl) {
     try {
-      const response = await fetch(url, {
+      const response = await fetch(nextUrl, {
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
@@ -21,70 +17,58 @@ export async function fetchContributors(repoFullName: string): Promise<GitHubCon
       });
 
       if (!response.ok) {
-        console.error(`Failed to fetch contributors for ${repoFullName}: ${response.statusText}`);
-        return [];
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      contributors = contributors.concat(data);
+      const data: T[] = await response.json();
+      results.push(...data);
 
       // Handle pagination
       const linkHeader = response.headers.get('Link');
       const nextLink = linkHeader?.split(',').find((link) => link.includes('rel="next"'));
-      url = nextLink ? nextLink.split(';')[0].trim().slice(1, -1) : '';
+      nextUrl = nextLink ? nextLink.split(';')[0].trim().slice(1, -1) : null;
     } catch (error) {
-      console.error(`Error fetching contributors for ${repoFullName}:`, error);
-      return [];
+      console.error('Error fetching paginated data:', error);
+      throw error;
     }
   }
 
-  return contributors;
+  return results;
+}
+
+export async function fetchContributors(repoFullName: string): Promise<GitHubContributor[]> {
+
+  if (!token) {
+    throw new Error('GitHub token is not set in environment variables.');
+  }
+
+  const url = `${GITHUB_API_URL}/repos/${repoFullName}/contributors?per_page=100`;
+  return fetchPaginatedData<GitHubContributor>(url, token);
 }
 
 export async function fetchRepos(orgName: string): Promise<GitHubRepo[]> {
-  const token = process.env.GITHUB_TOKEN;
   if (!token) {
     throw new Error('GitHub token is not set in environment variables.');
   }
 
-  const repos: GitHubRepo[] = [];
-  
-  let url = `${GITHUB_API_URL}/orgs/${orgName}/repos?per_page=100&sort=created&direction=desc`;
+  const url = `${GITHUB_API_URL}/orgs/${orgName}/repos?per_page=100&sort=created&direction=desc`;
+  const repos = await fetchPaginatedData<GitHubRepo>(url, token);
 
-  while (url) {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch repositories: ${response.statusText}`);
+  // Fetch contributors for all repositories in parallel
+  const reposWithContributors = await Promise.all(
+    repos.map(async (repo) => {
+      try {
+        const contributors = await fetchContributors(repo.full_name);
+        return { ...repo, contributors };
+      } catch (error) {
+        console.error(`Error fetching contributors for ${repo.full_name}:`, error);
+        return { ...repo, contributors: [] };
       }
+    })
+  );
 
-      const data: GitHubRepo[] = await response.json();
-      for (const repo of data) {
-        try {
-          const contributors = await fetchContributors(repo.full_name);
-          repos.push({ ...repo, contributors }); 
-        } catch (error) {
-          console.error(`Error fetching contributors for ${repo.full_name}:`, error);
-          repos.push({ ...repo, contributors: [] }); 
-        }
-      }
-
-      // Handle pagination
-      const linkHeader = response.headers.get('Link');
-      const nextLink = linkHeader?.split(',').find((link) => link.includes('rel="next"'));
-      url = nextLink ? nextLink.split(';')[0].trim().slice(1, -1) : '';
-    } catch (error) {
-      console.error('Error fetching repositories:', error);
-      break; 
-    }
-  }
-
-  // Add an additional sort to ensure newest repos are first, in case the API response isn't perfectly sorted
-  return repos.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  // Ensure the repos are sorted by creation date
+  return reposWithContributors.sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 }
