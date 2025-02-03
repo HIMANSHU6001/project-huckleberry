@@ -1,15 +1,14 @@
 "use server";
-import { Event } from "@/types/admin/events";
+import { Event, EventRegistration } from "@/types/admin/events";
 import { handleError, handleSuccess } from "@/utils";
 import { createClient } from "@supabase/supabase-js";
-import { Blog } from "@/types/admin/blogs";
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-export async function createEvent(event: Blog) {
+export async function createEvent(event: EventRegistration) {
     try {
         const { data, error } = await supabase
             .from("events")
