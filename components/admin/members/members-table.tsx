@@ -158,7 +158,6 @@ const MemberTable = ({
     });
 
     const handleEdit = (member: Member) => {
-        console.log(member);
         setCurrentMember(member);
         setOpen(true);
     };
