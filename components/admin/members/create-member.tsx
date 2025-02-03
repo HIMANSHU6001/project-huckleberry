@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
     Dialog,
@@ -69,6 +69,12 @@ const MemberRegistrationModal = ({
         };
         onSubmit(formattedData);
     };
+
+    useEffect(() => {
+        if (defaultValues) {
+            form.reset(defaultValues);
+        }
+    }, [defaultValues]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

@@ -17,7 +17,6 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { Github, Linkedin, Pencil, Trash2, Twitter } from "lucide-react";
-import Image from "next/image";
 import React from "react";
 import { toast } from "sonner";
 
@@ -159,6 +158,7 @@ const MemberTable = ({
     });
 
     const handleEdit = (member: Member) => {
+        console.log(member);
         setCurrentMember(member);
         setOpen(true);
     };
