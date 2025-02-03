@@ -1,21 +1,13 @@
 "use server";
-import { Member } from "@/types/admin/members/supabase";
+import { prisma } from "@/lib/prisma";
 import { handleError, handleSuccess } from "@/utils";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { Member } from "@/types/admin/members";
 
 export async function getAllMembers() {
     try {
-        const { data, error } = await supabase
-            .from("members")
-            .select("*")
-            .order("created_at", { ascending: false });
-
-        if (error) return handleError(error);
+        const data = await prisma.member.findMany({
+            orderBy: { created_at: "desc" },
+        });
         return handleSuccess({
             data: data || [],
             message: "Members fetched successfully",
@@ -27,15 +19,11 @@ export async function getAllMembers() {
 
 export async function createMember(member: Member) {
     try {
-        const { error } = await supabase
-            .from("members")
-            .insert([member])
-            .select()
-            .single();
-
-        if (error) return handleError(error);
+        const newMember = await prisma.member.create({
+            data: member,
+        });
         return handleSuccess({
-            ...member,
+            newMember,
             message: "Member created successfully",
         });
     } catch (error) {
@@ -45,16 +33,23 @@ export async function createMember(member: Member) {
 
 export async function updateMember(member: Member) {
     try {
-        const { error } = await supabase
-            .from("members")
-            .update(member)
-            .eq("id", member.id);
-
-        if (error) return handleError(error);
+        const updatedMember = await prisma.member.update({
+            where: { id: member.id },
+            data: member,
+        });
         return handleSuccess({
-            ...member,
+            ...updatedMember,
             message: "Member updated successfully",
         });
+    } catch (error) {
+        return handleError(error);
+    }
+}
+
+export async function deleteMember(id: string) {
+    try {
+        await prisma.member.delete({ where: { id } });
+        return handleSuccess({ message: "Member deleted successfully" });
     } catch (error) {
         return handleError(error);
     }

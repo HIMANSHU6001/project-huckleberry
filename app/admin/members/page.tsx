@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MemberRegistrationModal from "../../../components/admin/members/create-member";
-import { Member } from "@/types/admin/members/supabase";
-import MemberTable from "@/components/admin/members/MemberTable";
+import { Member } from "@/types/admin/members";
+import MemberTable from "@/components/admin/members/members-table";
 import { createMember, getAllMembers, updateMember } from "@/actions/members";
 import { withLoadingToast } from "@/utils";
 import { ApiResponse } from "@/types/commons";
@@ -22,7 +22,7 @@ const MembersDashboard = () => {
             setLoading(true);
             const result = await getAllMembers();
             if (result.status === "success" && "data" in result) {
-                setMembers(result?.data as unknown as Member[]);
+                setMembers(result.data.data as unknown as Member[]);
             }
             setLoading(false);
         };
@@ -44,7 +44,7 @@ const MembersDashboard = () => {
                                   ? { ...member, ...data }
                                   : member
                           )
-                        : [...prev, result.data]
+                        : [...prev, data as Member]
                 );
                 toast.success(
                     currentMember
