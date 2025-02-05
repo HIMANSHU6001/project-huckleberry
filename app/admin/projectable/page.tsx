@@ -1,20 +1,9 @@
 'use client';
 
 import { GitHubRepo } from "@/types/projects";
-import { ProjectCard } from "@/components/ProjectCard";
 import { useEffect, useState } from "react";
 import { fetchRepos } from "@/actions/projects";
-
-const REPO_IDS_TO_RENDER = [
-    915663472, //waffle
-    803870541, //vanilla
-    755467056, //udon
-    729890134, //ticket
-    602117160, //tart
-    552333690, //raisin
-    321042979, //huckleberry
-    236785498, //dates
-];
+import ReposPage from "@/components/RepositaryTable";
 
 export default function ProjectsPage() {
     const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -26,10 +15,7 @@ export default function ProjectsPage() {
             const orgName = "dscnitrourkela";
             try {
                 const data = await fetchRepos(orgName);
-                const filteredRepos = data.filter((repo: GitHubRepo) =>
-                    REPO_IDS_TO_RENDER.includes(repo.id)
-                );
-                setRepos(filteredRepos);
+                setRepos(data);
             } catch (error) {
                 console.error("Error fetching repositories:", error);
                 setError(error instanceof Error ? error.message : 'Failed to load projects');
@@ -67,10 +53,9 @@ export default function ProjectsPage() {
     return (
         <div className="container mx-auto p-6">
             <h1 className="text-4xl font-bold text-center mb-8">Our Projects</h1>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {repos.map((repo) => (
-                    <ProjectCard key={repo.id} repo={repo} />
-                ))}
+
+            <div className="mt-10">
+                <ReposPage repos={repos} />
             </div>
         </div>
     );
