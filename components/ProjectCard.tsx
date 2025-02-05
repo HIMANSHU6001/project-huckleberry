@@ -178,5 +178,3 @@ export const ProjectCard = ({ repo }: { repo: GitHubRepo }) => {
         </Card>
     );
 };
-
-export default ProjectCard;
