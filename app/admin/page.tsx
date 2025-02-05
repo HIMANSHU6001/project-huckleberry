@@ -16,7 +16,6 @@ import {
   mapPublishedProjects,
 } from "@/utils/dashboard-function";
 
-
 interface DashboardStats {
   totalMembers: number;
   upcomingEvents: number;
@@ -60,9 +59,12 @@ export default function DashboardPage() {
           throw new Error("Failed to fetch data");
         }
 
-        const members = membersResponse.data.data || [];
-        const events = eventsResponse.data.events || [];
-        const publishedProjects = publishedRepos.data.data || [];
+        const members = 'data' in membersResponse ? membersResponse.data.data : [];
+        const events = 'data' in eventsResponse ? eventsResponse.data.events : [];
+        const publishedProjects = 'data' in publishedRepos ? publishedRepos.data.data.map((project: any) => ({
+          ...project,
+          published_at: project.published_at.toISOString(),
+        })) : [];
 
         // Filter and prepare upcoming events
         const upcomingEvents = filterUpcomingEvents(events);
