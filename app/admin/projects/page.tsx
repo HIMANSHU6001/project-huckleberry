@@ -3,18 +3,7 @@
 import { GitHubRepo } from "@/types/projects";
 import { ProjectCard } from "@/components/admin/projects/ProjectCard";
 import { useEffect, useState } from "react";
-import { fetchRepos } from "@/actions/projects";
-
-const REPO_IDS_TO_RENDER = [
-    915663472, //waffle
-    803870541, //vanilla
-    755467056, //udon
-    729890134, //ticket
-    602117160, //tart
-    552333690, //raisin
-    321042979, //huckleberry
-    236785498, //dates
-];
+import { fetchRepos, getPublishedRepos } from "@/actions/projects";
 
 export default function ProjectsPage() {
     const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -25,10 +14,18 @@ export default function ProjectsPage() {
         const fetchRepositories = async () => {
             const orgName = "dscnitrourkela";
             try {
+                const result = await getPublishedRepos();
+                const published =
+                    result && "data" in result ? result.data.data : [];
+
                 const data = await fetchRepos(orgName);
                 const filteredRepos = data.filter((repo: GitHubRepo) =>
-                    REPO_IDS_TO_RENDER.includes(repo.id)
+                    published.some(
+                        (publishedRepo: { repo_id: string }) =>
+                            publishedRepo.repo_id === repo.id.toString()
+                    )
                 );
+
                 setRepos(filteredRepos);
             } catch (error) {
                 console.error("Error fetching repositories:", error);
