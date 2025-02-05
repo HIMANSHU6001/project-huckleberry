@@ -1,11 +1,13 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GitHubRepo } from "@/types/projects";
+import { getPublishedRepos, publishRepos } from "@/actions/projects";
+import { withLoadingToast } from "@/utils";
+import { ApiResponse } from "@/types/commons";
 
-// Define a table-friendly repo type
 interface TableRepo {
     id: string;
     name: string;
@@ -13,7 +15,6 @@ interface TableRepo {
     isSelected: boolean;
 }
 
-// Define props for the page
 interface ReposPageProps {
     repos: GitHubRepo[];
 }
@@ -22,32 +23,55 @@ export default function ReposPage({ repos: initialRepos }: ReposPageProps) {
     const [repos, setRepos] = useState<TableRepo[]>([]);
 
     useEffect(() => {
-        setRepos(
-            initialRepos.map(repo => ({
-                id: String(repo.id),
-                name: repo.name,
-                description: repo.description || "No description available",
-                isSelected: false,
-            }))
-        );
+        async function fetchRepos() {
+            const result = await getPublishedRepos();
+            const published =
+                result && "data" in result ? result.data.data : [];
+            setRepos(
+                initialRepos.map((repo) => ({
+                    id: String(repo.id),
+                    name: repo.name,
+                    description: repo.description || "No description available",
+                    isSelected: published?.some(
+                        (published) => published.repo_id === String(repo.id)
+                    ),
+                }))
+            );
+        }
+
+        fetchRepos();
     }, [initialRepos]);
 
-    // Function to toggle selection
     const toggleSelection = (id: string) => {
-        setRepos(prevRepos =>
-            prevRepos.map(repo =>
-                repo.id === id ? { ...repo, isSelected: !repo.isSelected } : repo
+        setRepos((prevRepos) =>
+            prevRepos.map((repo) =>
+                repo.id === id
+                    ? { ...repo, isSelected: !repo.isSelected }
+                    : repo
             )
         );
     };
 
-    const handlePublish = () => {
-        const selectedRepoIds = repos
-            .filter(repo => repo.isSelected)
-            .map(repo => repo.id);
+    const handlePublish = withLoadingToast(async (): Promise<ApiResponse> => {
+        const selectedRepos = repos
+            .filter((repo) => repo.isSelected)
+            .map((repo) => ({
+                id: repo.id,
+                name: repo.name,
+            }));
 
-        console.log("Selected Repo IDs:", selectedRepoIds);
-    };
+        if (selectedRepos.length === 0) {
+            return {
+                status: "error",
+                message: "No repositories selected",
+                statusCode: 400,
+            };
+        }
+
+        const result = await publishRepos(selectedRepos);
+
+        return result;
+    });
 
     return (
         <div className="container mx-auto p-6">
@@ -66,14 +90,16 @@ export default function ReposPage({ repos: initialRepos }: ReposPageProps) {
                     </tr>
                 </thead>
                 <tbody>
-                    {repos.map(repo => (
+                    {repos.map((repo) => (
                         <tr key={repo.id} className="border-b border-gray-700">
                             <td className="p-4">{repo.name}</td>
                             <td className="p-4">{repo.description}</td>
                             <td className="p-4 text-center">
-                                <Checkbox 
-                                    checked={repo.isSelected} 
-                                    onCheckedChange={() => toggleSelection(repo.id)} 
+                                <Checkbox
+                                    checked={repo.isSelected}
+                                    onCheckedChange={() =>
+                                        toggleSelection(repo.id)
+                                    }
                                 />
                             </td>
                         </tr>

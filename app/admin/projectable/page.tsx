@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
 import { GitHubRepo } from "@/types/projects";
 import { useEffect, useState } from "react";
 import { fetchRepos } from "@/actions/projects";
-import ReposPage from "@/components/RepositaryTable";
+import ReposPage from "@/components/admin/projects/RepositaryTable";
 
 export default function ProjectsPage() {
     const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -14,11 +14,15 @@ export default function ProjectsPage() {
         const fetchRepositories = async () => {
             const orgName = "dscnitrourkela";
             try {
-                const data = await fetchRepos(orgName);
+                const data = await fetchRepos(orgName, false);
                 setRepos(data);
             } catch (error) {
                 console.error("Error fetching repositories:", error);
-                setError(error instanceof Error ? error.message : 'Failed to load projects');
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : "Failed to load projects"
+                );
             } finally {
                 setIsLoading(false);
             }
@@ -30,7 +34,9 @@ export default function ProjectsPage() {
     if (isLoading) {
         return (
             <div className="container mx-auto p-6">
-                <h1 className="text-4xl font-bold text-center mb-8">Our Projects</h1>
+                <h1 className="text-4xl font-bold text-center mb-8">
+                    Our Projects
+                </h1>
                 <div className="text-center">
                     <p className="text-lg">Loading projects...</p>
                 </div>
@@ -41,7 +47,9 @@ export default function ProjectsPage() {
     if (error) {
         return (
             <div className="container mx-auto p-6">
-                <h1 className="text-4xl font-bold text-center mb-8">Our Projects</h1>
+                <h1 className="text-4xl font-bold text-center mb-8">
+                    Our Projects
+                </h1>
                 <div className="text-center">
                     <p className="text-red-500 text-lg">Error: {error}</p>
                     <p className="mt-2">Please try refreshing the page.</p>
@@ -52,7 +60,9 @@ export default function ProjectsPage() {
 
     return (
         <div className="container mx-auto p-6">
-            <h1 className="text-4xl font-bold text-center mb-8">Our Projects</h1>
+            <h1 className="text-4xl font-bold text-center mb-8">
+                Our Projects
+            </h1>
 
             <div className="mt-10">
                 <ReposPage repos={repos} />
