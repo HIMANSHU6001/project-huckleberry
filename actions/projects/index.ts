@@ -137,11 +137,13 @@ export async function getPublishedRepos() {
     }
 }
 
-export async function unpublishRepo(repoId: string) {
+export async function unpublishRepos(repoIds: string[]): Promise<ApiResponse> {
     try {
-        await prisma.project.delete({
+        await prisma.project.deleteMany({
             where: {
-                repo_id: repoId,
+                repo_id: {
+                    in: repoIds,
+                },
             },
         });
 

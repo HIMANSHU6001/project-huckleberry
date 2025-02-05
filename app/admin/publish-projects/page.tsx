@@ -1,21 +1,36 @@
 "use client";
 
-import { GitHubRepo } from "@/types/projects";
+import { TableRepo } from "@/types/projects";
 import { useEffect, useState } from "react";
-import { fetchRepos } from "@/actions/projects";
+import { fetchRepos, getPublishedRepos } from "@/actions/projects";
 import ReposPage from "@/components/admin/projects/RepositaryTable";
 
 export default function ProjectsPage() {
-    const [repos, setRepos] = useState<GitHubRepo[]>([]);
+    const [repos, setRepos] = useState<TableRepo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [publishedRepos, setPublishedRepos] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchRepositories = async () => {
             const orgName = "dscnitrourkela";
             try {
                 const data = await fetchRepos(orgName, false);
-                setRepos(data);
+                const result = await getPublishedRepos();
+                const published =
+                    result && "data" in result ? result.data.data : [];
+                setPublishedRepos(published.map((repo) => repo.repo_id));
+
+                const allRepos = data.map((repo) => ({
+                    id: String(repo.id),
+                    name: repo.name,
+                    description: repo.description || "No description available",
+                    isSelected: published?.some(
+                        (published) => published.repo_id === String(repo.id)
+                    ),
+                }));
+
+                setRepos(allRepos as TableRepo[]);
             } catch (error) {
                 console.error("Error fetching repositories:", error);
                 setError(
@@ -65,7 +80,7 @@ export default function ProjectsPage() {
             </h1>
 
             <div className="mt-10">
-                <ReposPage repos={repos} />
+                <ReposPage repos={repos} publishedRepos={publishedRepos} />
             </div>
         </div>
     );

@@ -3,43 +3,25 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { GitHubRepo } from "@/types/projects";
-import { getPublishedRepos, publishRepos } from "@/actions/projects";
+import { TableRepo } from "@/types/projects";
+import { publishRepos, unpublishRepos } from "@/actions/projects";
 import { withLoadingToast } from "@/utils";
 import { ApiResponse } from "@/types/commons";
 
-interface TableRepo {
-    id: string;
-    name: string;
-    description: string;
-    isSelected: boolean;
-}
-
 interface ReposPageProps {
-    repos: GitHubRepo[];
+    repos: TableRepo[];
+    publishedRepos: string[];
 }
 
-export default function ReposPage({ repos: initialRepos }: ReposPageProps) {
+export default function ReposPage({
+    repos: initialRepos,
+    publishedRepos,
+}: ReposPageProps) {
     const [repos, setRepos] = useState<TableRepo[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        async function fetchRepos() {
-            const result = await getPublishedRepos();
-            const published =
-                result && "data" in result ? result.data.data : [];
-            setRepos(
-                initialRepos.map((repo) => ({
-                    id: String(repo.id),
-                    name: repo.name,
-                    description: repo.description || "No description available",
-                    isSelected: published?.some(
-                        (published) => published.repo_id === String(repo.id)
-                    ),
-                }))
-            );
-        }
-
-        fetchRepos();
+        setRepos(initialRepos);
     }, [initialRepos]);
 
     const toggleSelection = (id: string) => {
@@ -53,6 +35,7 @@ export default function ReposPage({ repos: initialRepos }: ReposPageProps) {
     };
 
     const handlePublish = withLoadingToast(async (): Promise<ApiResponse> => {
+        setIsLoading(true);
         const selectedRepos = repos
             .filter((repo) => repo.isSelected)
             .map((repo) => ({
@@ -68,16 +51,26 @@ export default function ReposPage({ repos: initialRepos }: ReposPageProps) {
             };
         }
 
+        const reposToUnpublish = publishedRepos.filter(
+            (repo_id) => !selectedRepos.some((repo) => repo.id === repo_id)
+        );
+
+        await unpublishRepos(reposToUnpublish);
         const result = await publishRepos(selectedRepos);
+        setIsLoading(false);
 
         return result;
     });
 
     return (
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto p-6 font-geist-sans">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-4xl font-bold">Repositories</h1>
-                <Button onClick={handlePublish} variant="default">
+                <Button
+                    onClick={handlePublish}
+                    variant="default"
+                    disabled={isLoading}
+                >
                     Publish Selected
                 </Button>
             </div>
@@ -86,7 +79,7 @@ export default function ReposPage({ repos: initialRepos }: ReposPageProps) {
                     <tr className="border-b border-gray-700">
                         <th className="p-4 text-left">Repository Name</th>
                         <th className="p-4 text-left">Description</th>
-                        <th className="p-4 text-center">Select</th>
+                        <th className="p-4 text-center">Published</th>
                     </tr>
                 </thead>
                 <tbody>
