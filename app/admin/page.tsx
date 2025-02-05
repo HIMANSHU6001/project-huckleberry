@@ -1,20 +1,21 @@
 "use client";
 
 import { Calendar, Layers, Users } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { getAllEvents } from "@/actions/events";
 import { getAllMembers } from "@/actions/members";
 import { getPublishedRepos } from "@/actions/projects";
-import Loader from "@/components/ui/loader";
+import { StatCard } from "@/components/admin/dashboard/StatCard";
+import { RecentProjectsList } from "@/components/admin/dashboard/RecentPorjectList";
+import { UpcomingEventsList } from "@/components/admin/dashboard/UpcomingEventList";
+import { ErrorDisplay } from "@/components/admin/dashboard/ErrorComponent";
+import {
+  filterUpcomingEvents,
+  mapUpcomingEvents,
+  mapPublishedProjects,
+} from "@/utils/dashboard-function";
+
 
 interface DashboardStats {
   totalMembers: number;
@@ -51,6 +52,7 @@ export default function DashboardPage() {
             getPublishedRepos(),
           ]);
 
+        // Validate responses
         if (
           membersResponse.status !== "success" ||
           eventsResponse.status !== "success"
@@ -58,29 +60,19 @@ export default function DashboardPage() {
           throw new Error("Failed to fetch data");
         }
 
-        const now = new Date();
-
         const members = membersResponse.data.data || [];
         const events = eventsResponse.data.events || [];
         const publishedProjects = publishedRepos.data.data || [];
 
-        const upcomingEvents = events.filter(
-          (event) => new Date(parseInt(event.timestamp)) > now
-        );
+        // Filter and prepare upcoming events
+        const upcomingEvents = filterUpcomingEvents(events);
 
+        // Update stats state
         setStats({
           totalMembers: members.length,
           upcomingEvents: upcomingEvents.length,
-          recentProjects: publishedProjects.map((project) => ({
-            id: project.id,
-            name: project.repo_name,
-            updatedAt: new Date(project.published_at),
-          })),
-          upcomingEventsList: upcomingEvents.slice(0, 3).map((event) => ({
-            id: event.id,
-            title: event.title,
-            timestamp: new Date(parseInt(event.timestamp)),
-          })),
+          recentProjects: mapPublishedProjects(publishedProjects),
+          upcomingEventsList: mapUpcomingEvents(upcomingEvents),
         });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -97,52 +89,8 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, []);
 
-  const StatCard = ({
-    title,
-    value,
-    icon: Icon,
-    link,
-    linkText,
-  }: {
-    title: string;
-    value: number | string;
-    icon: any;
-    link?: string;
-    linkText?: string;
-  }) => (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-gist text-muted-foreground">
-          {title}
-        </CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-gist">
-          {isLoading ? <Loader /> : value}
-        </div>
-      </CardContent>
-      {link && linkText && (
-        <CardFooter>
-          <Button className="px-2 text-sm font-gist text-black hover:no-underline">
-            <Link href={link}>{linkText}</Link>
-          </Button>
-        </CardFooter>
-      )}
-    </Card>
-  );
-
   if (error) {
-    return (
-      <div className="min-h-screen bg-background p-8 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-red-500">Error</CardTitle>
-          </CardHeader>
-          <CardContent>{error}</CardContent>
-        </Card>
-      </div>
-    );
+    return <ErrorDisplay message={error} />;
   }
 
   return (
@@ -157,6 +105,7 @@ export default function DashboardPage() {
             icon={Layers}
             link="/admin/publish-projects"
             linkText="Go to all projects →"
+            isLoading={isLoading}
           />
           <StatCard
             title="Team Members"
@@ -164,6 +113,7 @@ export default function DashboardPage() {
             icon={Users}
             link="/admin/members"
             linkText="View all members →"
+            isLoading={isLoading}
           />
           <StatCard
             title="Upcoming Events"
@@ -171,6 +121,7 @@ export default function DashboardPage() {
             icon={Calendar}
             link="/admin/events"
             linkText="View calendar →"
+            isLoading={isLoading}
           />
         </div>
 
@@ -180,36 +131,7 @@ export default function DashboardPage() {
               <CardTitle className="font-gist">Recent Projects</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 h-72 overflow-y-auto">
-                {stats.recentProjects.length > 0 ? (
-                  stats.recentProjects.map((project) => (
-                    <div key={project.id} className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
-                        <Layers className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-gist">
-                          {project.name
-                            .replace(/-/g, " ")
-                            .split(" ")
-                            .map(
-                              (word) =>
-                                word.charAt(0).toUpperCase() + word.slice(1)
-                            )
-                            .join(" ")}
-                        </p>
-                        <p className="text-xs font-gist text-muted-foreground">
-                          Published {project.updatedAt.toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No published projects
-                  </p>
-                )}
-              </div>
+              <RecentProjectsList projects={stats.recentProjects} />
             </CardContent>
           </Card>
 
@@ -218,27 +140,7 @@ export default function DashboardPage() {
               <CardTitle className="font-gist">Upcoming Events</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {stats.upcomingEventsList.length > 0 ? (
-                  stats.upcomingEventsList.map((event) => (
-                    <div key={event.id} className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
-                        <Calendar className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-gist">{event.title}</p>
-                        <p className="text-xs font-gist text-muted-foreground">
-                          {event.timestamp.toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No upcoming events
-                  </p>
-                )}
-              </div>
+              <UpcomingEventsList events={stats.upcomingEventsList} />
             </CardContent>
           </Card>
         </div>
