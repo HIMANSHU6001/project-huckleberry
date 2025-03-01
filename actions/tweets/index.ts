@@ -2,30 +2,11 @@
 
 import { prisma } from "@/lib/prisma";
 import { Tweet } from "@/types/admin/tweets";
+import { TwitterResponse } from "@/types/admin/tweets";
 
 const TWITTER_BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
 const TWITTER_USER_ID = process.env.TWITTER_USER_ID;
 const TWITTER_API_BASE = "https://api.x.com/2";
-
-interface TwitterResponse {
-  data: {
-    id: string;
-    text: string;
-    created_at: string;
-    public_metrics: {
-      retweet_count: number;
-      reply_count: number;
-      like_count: number;
-      quote_count: number;
-    };
-    conversation_id: string;
-    in_reply_to_user_id?: string;
-  }[];
-  meta: {
-    result_count: number;
-    next_token?: string;
-  };
-}
 
 async function saveTweetToDB(tweet: Tweet) {
   const existingTweet = await prisma.tweet.findUnique({
