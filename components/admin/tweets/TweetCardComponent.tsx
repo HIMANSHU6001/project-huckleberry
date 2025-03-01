@@ -4,20 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Heart, Repeat2, MessageCircle, Share } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-
-interface TweetCardProps {
-  tweet: {
-    id: string;
-    text: string;
-    created_at: string;
-    public_metrics: {
-      retweet_count: number;
-      reply_count: number;
-      like_count: number;
-      quote_count: number;
-    };
-  };
-}
+import { TweetCardProps } from "@/types/admin/tweets";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
