@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const PUBLIC_ROUTES = ["/login", "/signup"];
-const PROTECTED_ROUTES = ["/dashboard", "/admin"];
+const PROTECTED_ROUTES = ["/admin"];
 const API_ROUTES = ["/api"];
 
 const matchesPattern = (pathname: string, patterns: string[]) => {
@@ -61,9 +61,7 @@ export async function updateSession(request: NextRequest) {
             }
         } else {
             if (matchesPattern(pathname, PUBLIC_ROUTES)) {
-                return NextResponse.redirect(
-                    new URL("/dashboard", request.url)
-                );
+                return NextResponse.redirect(new URL("/admin", request.url));
             }
 
             // needed in future for API routes if we want to restrict access
