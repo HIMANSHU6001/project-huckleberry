@@ -11,7 +11,11 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:reset": "prisma migrate reset",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix",
+    "prettier": "prettier --check \"./**/*.{ts,tsx,js,jsx,css,scss,md}\" --ignore-path .gitignore",
+    "prettier:check": "prettier --check \"./**/*.{ts,tsx,js,jsx,css,scss,md}\" --ignore-path .gitignore",
+    "prettier:fix": "prettier --write \"./**/*.{ts,tsx,js,jsx,css,scss,md}\" --ignore-pattern node_modules/"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -67,6 +71,12 @@
     "@types/react-dom": "19.0.4"
   },
   "lint-staged": {
-    "**/*.{js,ts,jsx,tsx,json,css,md}": "prettier --write"
+    "*.{js,jsx,ts,tsx,md}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{css,scss,json}": [
+      "prettier --write"
+    ]
   }
 }

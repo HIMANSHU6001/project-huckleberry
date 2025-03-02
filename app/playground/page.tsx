@@ -1,6 +1,6 @@
-"use client";
-import React from "react";
-import { Heading } from "./styles";
+'use client';
+import React from 'react';
+import { Heading } from './styles';
 
 const page = () => {
   return (

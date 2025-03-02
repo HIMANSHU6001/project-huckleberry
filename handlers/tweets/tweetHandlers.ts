@@ -1,12 +1,12 @@
-import { toast } from "sonner";
+import { toast } from 'sonner';
 import {
   getTotalTweetCount,
   fetchAllDSCTweets,
   fetchLatestTweet,
   getTweetsFromDB,
   updateFetchedAt,
-} from "@/actions/tweets";
-import { Tweet } from "@/types/admin/tweets";
+} from '@/actions/tweets';
+import { Tweet } from '@/types/admin/tweets';
 
 // Check if enough time has passed since last fetch (2 hours)
 export const canFetchTweets = (lastFetchedTimestamp: Date | null): boolean => {
@@ -25,7 +25,7 @@ export const fetchTweetCount = async (): Promise<number> => {
     const count = await getTotalTweetCount();
     return count;
   } catch (error) {
-    console.error("Error fetching tweet count:", error);
+    console.error('Error fetching tweet count:', error);
     return 0;
   }
 };
@@ -36,7 +36,7 @@ export const fetchTweetsFromDB = async (): Promise<Tweet[]> => {
     const tweets = await getTweetsFromDB();
     return tweets;
   } catch (error) {
-    console.error("Error fetching tweets from DB:", error);
+    console.error('Error fetching tweets from DB:', error);
     return [];
   }
 };
@@ -48,18 +48,18 @@ export const handleUpdateFetchedAt = async (
 ): Promise<Date | null> => {
   try {
     const fetchedDate = await updateFetchedAt(type, date);
-    const formattedDate = new Date(fetchedDate).toLocaleString("en-GB", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-      hour12: true,
-    });
+    // const formattedDate = new Date(fetchedDate).toLocaleString('en-GB', {
+    //   year: 'numeric',
+    //   month: 'numeric',
+    //   day: 'numeric',
+    //   hour: 'numeric',
+    //   minute: 'numeric',
+    //   second: 'numeric',
+    //   hour12: true,
+    // });
     return fetchedDate;
   } catch (error) {
-    console.error("Error updating fetchedAt:", error);
+    console.error('Error updating fetchedAt:', error);
     return null;
   }
 };
@@ -96,15 +96,15 @@ export const handleFetchLatestTweet = async (
   try {
     // Fetch latest tweet
     await fetchLatestTweet();
-    toast.success("Latest tweet fetched successfully!", {
+    toast.success('Latest tweet fetched successfully!', {
       duration: 3000,
     });
 
     // Call the success callback
     onSuccess();
   } catch (error) {
-    console.error("Error fetching latest tweet:", error);
-    toast.error("Failed to fetch latest tweet. Please try again later.", {
+    console.error('Error fetching latest tweet:', error);
+    toast.error('Failed to fetch latest tweet. Please try again later.', {
       duration: 5000,
     });
   } finally {
@@ -128,15 +128,15 @@ export const handleFetchAllDSCTweets = async (
   try {
     // Actually fetch the tweets
     await fetchAllDSCTweets(20); // pass the limit of 20
-    toast.success("Successfully fetched the latest 20 tweets!", {
+    toast.success('Successfully fetched the latest 20 tweets!', {
       duration: 3000,
     });
 
     // Call the success callback
     onSuccess();
   } catch (error) {
-    console.error("Error fetching all DSC tweets:", error);
-    toast.error("Failed to fetch tweets. Please try again later.", {
+    console.error('Error fetching all DSC tweets:', error);
+    toast.error('Failed to fetch tweets. Please try again later.', {
       duration: 5000,
     });
   } finally {

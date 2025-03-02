@@ -1,6 +1,6 @@
 export type Blog = {
   author: string;
-  categories: [string] ;
+  categories: [string];
   content: string;
   description: string;
   guid: string;

@@ -1,5 +1,5 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -16,20 +16,23 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { MemberFormData, MemberRegistrationModalProps } from "@/types/admin/members/supabase";
-import { roleOptions } from "@/config/admin/members/constants";
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import {
+  MemberFormData,
+  MemberRegistrationModalProps,
+} from '@/types/admin/members/supabase';
+import { roleOptions } from '@/config/admin/members/constants';
 
 const MemberRegistrationModal = ({
   open,
@@ -40,17 +43,17 @@ const MemberRegistrationModal = ({
   isLoading = false,
 }: MemberRegistrationModalProps) => {
   const defaultFormValues: MemberFormData = {
-    profile_photo: "",
-    user_name: "",
-    email: "",
+    profile_photo: '',
+    user_name: '',
+    email: '',
     mobile_no: 0,
-    role: "developer",
-    github: "",
-    linkedin: "",
-    twitter: "",
+    role: 'developer',
+    github: '',
+    linkedin: '',
+    twitter: '',
     other_socials: [],
-    caption: "",
-    introduction: "",
+    caption: '',
+    introduction: '',
     is_admin: false,
     is_super_admin: false,
   };
@@ -72,12 +75,12 @@ const MemberRegistrationModal = ({
       <DialogContent className="max-w-2xl font-geist-sans h-[90dvh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit Member" : "Add New Member"}
+            {isEditing ? 'Edit Member' : 'Add New Member'}
           </DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Make changes to member information here. Click save when you're done."
-              : "Fill in the details for the new member."}
+              : 'Fill in the details for the new member.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -90,7 +93,7 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="profile_photo"
-                rules={{ required: "Profile photo URL is required" }}
+                rules={{ required: 'Profile photo URL is required' }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Profile Photo URL</FormLabel>
@@ -105,7 +108,7 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="user_name"
-                rules={{ required: "Username is required" }}
+                rules={{ required: 'Username is required' }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
@@ -121,10 +124,10 @@ const MemberRegistrationModal = ({
                 control={form.control}
                 name="email"
                 rules={{
-                  required: "Email is required",
+                  required: 'Email is required',
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
+                    message: 'Invalid email address',
                   },
                 }}
                 render={({ field }) => (
@@ -141,7 +144,7 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="mobile_no"
-                rules={{ required: "Mobile number is required" }}
+                rules={{ required: 'Mobile number is required' }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Mobile Number</FormLabel>
@@ -160,7 +163,7 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="role"
-                rules={{ required: "Role is required" }}
+                rules={{ required: 'Role is required' }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
@@ -193,7 +196,7 @@ const MemberRegistrationModal = ({
                 <FormField
                   control={form.control}
                   name="github"
-                  rules={{ required: "GitHub profile is required" }}
+                  rules={{ required: 'GitHub profile is required' }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>GitHub Profile</FormLabel>
@@ -208,7 +211,7 @@ const MemberRegistrationModal = ({
                 <FormField
                   control={form.control}
                   name="linkedin"
-                  rules={{ required: "LinkedIn profile is required" }}
+                  rules={{ required: 'LinkedIn profile is required' }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>LinkedIn Profile</FormLabel>
@@ -223,7 +226,7 @@ const MemberRegistrationModal = ({
                 <FormField
                   control={form.control}
                   name="twitter"
-                  rules={{ required: "Twitter profile is required" }}
+                  rules={{ required: 'Twitter profile is required' }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Twitter Profile</FormLabel>
@@ -245,7 +248,7 @@ const MemberRegistrationModal = ({
                   <FormItem>
                     <FormLabel>Caption</FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value || ""} />
+                      <Input {...field} value={field.value || ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -255,7 +258,7 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="introduction"
-                rules={{ required: "Introduction is required" }}
+                rules={{ required: 'Introduction is required' }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Introduction</FormLabel>
@@ -315,7 +318,7 @@ const MemberRegistrationModal = ({
 
             <DialogFooter>
               <Button type="submit" disabled={isLoading}>
-                {isEditing ? "Save Changes" : "Add Member"}
+                {isEditing ? 'Save Changes' : 'Add Member'}
               </Button>
             </DialogFooter>
           </form>

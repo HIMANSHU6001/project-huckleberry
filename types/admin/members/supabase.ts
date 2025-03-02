@@ -1,5 +1,3 @@
-import { ColumnDef } from "@tanstack/react-table";
-
 export type Json =
   | string
   | number
@@ -95,7 +93,7 @@ export interface Member {
   is_super_admin: boolean;
 }
 
-export type MemberFormData = Omit<Member, "id" | "created_at"> & {
+export type MemberFormData = Omit<Member, 'id' | 'created_at'> & {
   id?: string;
   created_at?: string;
 };

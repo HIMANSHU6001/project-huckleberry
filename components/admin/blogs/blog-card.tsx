@@ -1,14 +1,14 @@
-import Image from "next/image";
-import React from "react";
+import Image from 'next/image';
+import React from 'react';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { CalendarIcon } from "lucide-react";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { CalendarIcon } from 'lucide-react';
 
 interface BlogCardProps {
   blog: {
@@ -42,7 +42,7 @@ const BlogCard = ({ blog }: BlogCardProps) => {
       <CardHeader className="p-0">
         <div className="aspect-video relative overflow-hidden">
           <Image
-            src={imageUrl || ""}
+            src={imageUrl || ''}
             alt={blog.title}
             fill
             className="object-cover"
@@ -57,13 +57,13 @@ const BlogCard = ({ blog }: BlogCardProps) => {
           <Button
             variant="link"
             className="p-0 h-auto font-normal"
-            onClick={() => window.open(authorUrl || "", "_blank")}
+            onClick={() => window.open(authorUrl || '', '_blank')}
           >
             {blog.author}
           </Button>
           <div className="flex items-center gap-2">
             <CalendarIcon className="h-4 w-4" />
-            <span>{blog.pubDate.split(" ")[0]}</span>
+            <span>{blog.pubDate.split(' ')[0]}</span>
           </div>
         </div>
 
@@ -79,7 +79,7 @@ const BlogCard = ({ blog }: BlogCardProps) => {
       <CardFooter className="p-4 pt-0">
         <Button
           className="w-full"
-          onClick={() => window.open(blog.link, "_blank")}
+          onClick={() => window.open(blog.link, '_blank')}
         >
           Read More
         </Button>
