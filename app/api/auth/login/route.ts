@@ -17,7 +17,6 @@ export async function POST(request: Request) {
   // console.log("hello from backend");
   try {
     const { token, refreshToken } = await request.json();
-    console.log(token);
 
     if (!token) {
       return createErrorResponse("Access token is required", 400);
@@ -56,7 +55,7 @@ export async function POST(request: Request) {
         user: {
           // id: member?.id,
           email: member?.email,
-          isAdmin: member?.is_admin || true
+          isAdmin: member?.is_admin || false
         }
       }),
       {

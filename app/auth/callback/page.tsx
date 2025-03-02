@@ -54,7 +54,7 @@ const AuthCallback = () => {
 
           if (response.data?.user && response.data?.user.isAdmin) {
             // console.log("hiiii");
-            router.push("/dashboard");
+            router.push("/admin");
             toast(
               `isAdminStatus: ${response.data?.user.isAdmin}, welcome Admin`
             );
