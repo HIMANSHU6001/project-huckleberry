@@ -1,15 +1,12 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function PageHeader({ className, children, ...props }: PageHeaderProps) {
   return (
-    <section
-      className={cn("grid gap-1", className)}
-      {...props}
-    >
+    <section className={cn("grid gap-1", className)} {...props}>
       {children}
     </section>
-  )
+  );
 }
 
 interface PageHeaderHeadingProps
@@ -27,7 +24,7 @@ export function PageHeaderHeading({
       )}
       {...props}
     />
-  )
+  );
 }
 
 interface PageHeaderDescriptionProps
@@ -45,5 +42,5 @@ export function PageHeaderDescription({
       )}
       {...props}
     />
-  )
+  );
 }

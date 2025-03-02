@@ -1,81 +1,125 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_ROUTES = ["/login", "/signup"];
-const PROTECTED_ROUTES = ["/dashboard", "/admin"];
+const PUBLIC_ROUTES = ["/login", "/signup", "/", "/about", "/contact"];
+const PROTECTED_ROUTES = ["/dashboard", "/admin", "/profile", "/settings"];
 const API_ROUTES = ["/api"];
 
 const matchesPattern = (pathname: string, patterns: string[]) => {
-  return patterns.some((pattern) => pathname.startsWith(pattern));
+  return patterns.some(
+    (pattern) => pathname === pattern || pathname.startsWith(`${pattern}/`)
+  );
 };
 
-export async function updateSession(request: NextRequest) {
-  const requestUrl = request.nextUrl.clone();
-  const { pathname } = requestUrl;
+export async function middleware(request: NextRequest) {
+  const response = NextResponse.next();
 
-  let response = NextResponse.next({
-    request
-  });
+  try {
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return request.cookies.get(name)?.value;
+          },
+          set(name: string, value: string, options: CookieOptions) {
+            response.cookies.set({ name, value, ...options });
+          },
+          remove(name: string, options: CookieOptions) {
+            response.cookies.set({ name, value: "", ...options });
+          }
+        }
+      }
+    );
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          response = NextResponse.next({
-            request
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.getUser();
+
+    if (error) {
+      console.error("Auth error:", error.message);
+
+      response.cookies.set({
+        name: "sb-access-token",
+        value: "",
+        expires: new Date(0)
+      });
+      response.cookies.set({
+        name: "sb-refresh-token",
+        value: "",
+        expires: new Date(0)
+      });
+    }
+
+    if (matchesPattern(request.nextUrl.pathname, API_ROUTES)) {
+      if (!user) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set("x-user-id", user.id);
+      requestHeaders.set("x-user-email", user.email || "");
+
+      const role = user.app_metadata?.role || "user";
+      requestHeaders.set("x-user-role", role);
+
+      if (
+        request.nextUrl.pathname.startsWith("/api/admin") &&
+        role !== "admin"
+      ) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+      const updatedRequest = new Request(request.url, {
+        headers: requestHeaders,
+        method: request.method,
+        body: request.body,
+        redirect: request.redirect,
+        signal: request.signal
+      });
+
+      return NextResponse.next({
+        request: updatedRequest
+      });
+    }
+
+    if (matchesPattern(request.nextUrl.pathname, PROTECTED_ROUTES)) {
+      if (!user) {
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("redirectedFrom", request.nextUrl.pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      if (request.nextUrl.pathname.startsWith("/admin")) {
+        const role = user.app_metadata?.role || "user";
+        if (role !== "admin") {
+          return NextResponse.redirect(new URL("/dashboard", request.url));
         }
       }
     }
-  );
-
-  try {
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
-
-    const returnTo = request.nextUrl.pathname;
-
-    if (!user) {
-      // If user is not authenticated
-      if (
-        matchesPattern(pathname, PROTECTED_ROUTES) ||
-        matchesPattern(pathname, API_ROUTES)
-      ) {
-        const loginUrl = new URL("/login", request.url);
-        if (!matchesPattern(returnTo, PUBLIC_ROUTES)) {
-          loginUrl.searchParams.set("returnTo", returnTo);
+    if (matchesPattern(request.nextUrl.pathname, PUBLIC_ROUTES)) {
+      if (user) {
+        const redirectTo = request.cookies.get("redirectTo")?.value;
+        if (redirectTo) {
+          response.cookies.set({
+            name: "redirectTo",
+            value: "",
+            expires: new Date(0)
+          });
+          return NextResponse.redirect(new URL(redirectTo, request.url));
         }
-        return NextResponse.redirect(loginUrl);
-      }
-    } else {
-      if (matchesPattern(pathname, PUBLIC_ROUTES)) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
-      }
-
-      if (matchesPattern(pathname, API_ROUTES)) {
-        response.headers.set("x-user-id", user.id);
-        response.headers.set("x-user-role", user.role?.toString() ?? "user");
       }
     }
 
     return response;
-  } catch (error) {
-    console.error("Auth middleware error:", error);
-    if (matchesPattern(pathname, PROTECTED_ROUTES)) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  } catch (err) {
+    console.error("Middleware error:", err);
     return response;
   }
 }
+export const config = {
+  matcher: [
+    "/((?!_next/static|_next/image|assets/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js)$).*)"
+  ]
+};

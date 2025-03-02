@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosError } from "axios";
 import { supabase } from "@/utils/supabase/signinwithgoogle";
+// import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const AuthCallback = () => {
   const router = useRouter();
@@ -10,14 +12,11 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuth = async () => {
       try {
-        // Extensive logging for debugging
-        console.log("Starting authentication process");
-
-        // Get session with more detailed error handling
+        // console.log("Starting authentication process");
         const { data, error } = await supabase.auth.getSession();
 
-        console.log("Session data:", data);
-        console.log("Session error:", error);
+        // console.log("Session data:", data);
+        // console.log("Session error:", error);
 
         if (error) {
           console.error("Supabase session error:", error);
@@ -30,34 +29,40 @@ const AuthCallback = () => {
           router.push("/login");
           return;
         }
-
-        // Log the access token
         const accessToken = data.session.access_token;
-        console.log("Access Token:", accessToken);
+        const refreshToken = data.session.refresh_token;
+        // console.log("Access Token:", accessToken);
 
         try {
-          // Use full URL for local development
+          // console.log("hi");
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/login`,
             {
-              token: accessToken
+              token: accessToken,
+              refreshToken
             },
             {
               headers: {
                 "Content-Type": "application/json"
-                // Optional: Add any additional headers if needed
               },
-              withCredentials: true // Important for cookie handling
+              withCredentials: true
             }
           );
 
-          console.log("Backend response:", response.data);
+          // console.log("Backend response:", response.data);
+          // console.log("cookies set:", document.cookie);
 
-          // Handle successful authentication
-          if (response.data?.user) {
+          if (response.data?.user && response.data?.user.isAdmin) {
+            // console.log("hiiii");
             router.push("/dashboard");
+            toast(
+              `isAdminStatus: ${response.data?.user.isAdmin}, welcome Admin`
+            );
           } else {
             router.push("/login");
+            toast(
+              `isAdminStatus: ${response.data?.user.isAdmin}, not the admin`
+            );
           }
         } catch (axiosError) {
           const error = axiosError as AxiosError;
