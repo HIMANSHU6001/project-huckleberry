@@ -8,31 +8,34 @@ const TWITTER_BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
 const TWITTER_USER_ID = process.env.TWITTER_USER_ID;
 const TWITTER_API_BASE = 'https://api.x.com/2';
 
-async function saveTweetToDB(tweet: Tweet) {
-  const existingTweet = await prisma.tweet.findUnique({
-    where: { id: tweet.id },
-  });
-
-  if (!existingTweet) {
-    await prisma.tweet.create({
-      data: {
-        id: tweet.id,
-        text: tweet.text,
-        createdAt: new Date(tweet.created_at),
-        retweetCount: tweet.public_metrics.retweet_count,
-        replyCount: tweet.public_metrics.reply_count,
-        likeCount: tweet.public_metrics.like_count,
-        quoteCount: tweet.public_metrics.quote_count,
-        conversationId: tweet.conversation_id,
-        inReplyToUserId: tweet.in_reply_to_user_id,
-      },
+async function saveTweetsToDB(tweets: Tweet[]) {
+  for (const tweet of tweets) {
+    const existingTweet = await prisma.tweet.findUnique({
+      where: { id: tweet.id },
     });
+
+    if (!existingTweet) {
+      await prisma.tweet.create({
+        data: {
+          id: tweet.id,
+          text: tweet.text,
+          createdAt: new Date(tweet.created_at),
+          retweetCount: tweet.public_metrics.retweet_count,
+          replyCount: tweet.public_metrics.reply_count,
+          likeCount: tweet.public_metrics.like_count,
+          quoteCount: tweet.public_metrics.quote_count,
+          conversationId: tweet.conversation_id,
+          inReplyToUserId: tweet.in_reply_to_user_id,
+        },
+      });
+    }
   }
 }
 
 export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
   if (!TWITTER_BEARER_TOKEN || !TWITTER_USER_ID) {
-    throw new Error('Twitter configuration is incomplete');
+    console.error('Twitter configuration is incomplete');
+    return [];
   }
 
   try {
@@ -55,10 +58,12 @@ export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
     console.log('Tweets response:', tweetsResponse);
 
     if (!tweetsResponse.ok) {
-      throw new Error('Failed to fetch tweets-1');
+      console.error('Failed to fetch tweets-1');
+      return [];
     }
 
     const tweetsData: TwitterResponse = await tweetsResponse.json();
+    console.log('Tweets data:', tweetsData);
 
     if (!tweetsData.data) {
       return [];
@@ -81,20 +86,19 @@ export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
 
     console.log('Tweets:', tweets);
 
-    for (const tweet of tweets) {
-      await saveTweetToDB(tweet);
-    }
+    await saveTweetsToDB(tweets);
 
     return tweets;
   } catch (error) {
     console.error('Error fetching tweets:', error);
-    throw new Error('Failed to fetch tweets-2');
+    return [];
   }
 }
 
 export async function fetchLatestTweet(): Promise<Tweet | null> {
   if (!TWITTER_BEARER_TOKEN || !TWITTER_USER_ID) {
-    throw new Error('Twitter configuration is incomplete');
+    console.error('Twitter configuration is incomplete');
+    return null;
   }
 
   try {
@@ -115,7 +119,8 @@ export async function fetchLatestTweet(): Promise<Tweet | null> {
     );
 
     if (!tweetsResponse.ok) {
-      throw new Error('Failed to fetch the latest tweet');
+      console.error('Failed to fetch the latest tweet');
+      return null;
     }
 
     const tweetsData: TwitterResponse = await tweetsResponse.json();
@@ -135,12 +140,12 @@ export async function fetchLatestTweet(): Promise<Tweet | null> {
       in_reply_to_user_id: tweet.in_reply_to_user_id,
     };
 
-    await saveTweetToDB(tweetData);
+    await saveTweetsToDB([tweetData]);
 
     return tweetData;
   } catch (error) {
     console.error('Error fetching the latest tweet:', error);
-    throw new Error('Failed to fetch the latest tweet');
+    return null;
   }
 }
 
@@ -149,8 +154,8 @@ export async function getTotalTweetCount(): Promise<number> {
     const count = await prisma.tweet.count();
     return count;
   } catch (error) {
-    console.error('Error getting total tweet count:', error);
-    throw new Error('Failed to get total tweet count');
+    console.log('Error getting total tweet count:', error);
+    return 0;
   }
 }
 
@@ -177,7 +182,7 @@ export async function getTweetsFromDB(): Promise<Tweet[]> {
     return formattedTweets;
   } catch (error) {
     console.error('Error fetching tweets from DB:', error);
-    throw new Error('Failed to fetch tweets from DB');
+    return [];
   }
 }
 
@@ -221,6 +226,6 @@ export async function updateFetchedAt(
     }
   } catch (error) {
     console.error('Error updating fetchedAt:', error);
-    throw new Error('Failed to update fetchedAt');
+    return new Date('2025-02-27T21:30:00Z');
   }
 }
