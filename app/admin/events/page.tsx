@@ -1,27 +1,27 @@
-"use client";
-import { DataTable } from "@/components/ui/data-table";
-import { Button } from "@/components/ui/button";
-import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
+'use client';
+import { DataTable } from '@/components/ui/data-table';
+import { Button } from '@/components/ui/button';
+import { DialogHeader, DialogFooter } from '@/components/ui/dialog';
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Event, EventRegistration } from "@/types/admin/events";
-import EventRegistrationModal from "@/components/admin/events/create-event";
-import { columns } from "@/config/admin/events";
-import { uploadToCloudinary, upsertEvent, withLoadingToast } from "@/utils";
+} from '@/components/ui/dialog';
+import { Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Event, EventRegistration } from '@/types/admin/events';
+import EventRegistrationModal from '@/components/admin/events/create-event';
+import { columns } from '@/config/admin/events';
+import { uploadToCloudinary, upsertEvent, withLoadingToast } from '@/utils';
 
 import {
   createEvent,
   updateEvent,
   getAllEvents,
   deleteEvent,
-} from "@/actions/events";
-import { ApiResponse } from "@/types/commons";
+} from '@/actions/events';
+import { ApiResponse } from '@/types/commons';
 
 const EventsDashboard = () => {
   const [open, setOpen] = useState(false);
@@ -71,7 +71,7 @@ const EventsDashboard = () => {
         ? await updateEvent(currentEvent.id, eventData)
         : await createEvent(eventData);
 
-      if (result.status === "success") {
+      if (result.status === 'success') {
         setEvents((prevEvents) =>
           upsertEvent(prevEvents, data, currentEvent?.id)
         );
@@ -93,7 +93,7 @@ const EventsDashboard = () => {
   useEffect(() => {
     async function fetchEvents() {
       const result = await getAllEvents();
-      if (result.status === "success" && "data" in result) {
+      if (result.status === 'success' && 'data' in result) {
         setEvents(result.data.events as Event[]);
       }
     }

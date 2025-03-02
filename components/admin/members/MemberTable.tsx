@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -7,19 +7,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Member } from "@/types/admin/members/supabase";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+} from '@/components/ui/table';
+import { Member } from '@/types/admin/members/supabase';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { Github, Linkedin, Pencil, Trash2, Twitter } from "lucide-react";
-import Image from "next/image";
-import React from "react";
-import { toast } from "sonner";
+} from '@tanstack/react-table';
+import { Github, Linkedin, Pencil, Trash2, Twitter } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
+import { toast } from 'sonner';
 
 const MemberTable = ({
   members,
@@ -37,8 +37,8 @@ const MemberTable = ({
   const supabase = createClientComponentClient();
   const columns: ColumnDef<Member>[] = [
     {
-      accessorKey: "profile_photo",
-      header: "Profile",
+      accessorKey: 'profile_photo',
+      header: 'Profile',
       cell: ({ row }) => (
         <div className="relative w-10 h-10">
           <Image
@@ -51,25 +51,25 @@ const MemberTable = ({
       ),
     },
     {
-      accessorKey: "user_name",
-      header: "Username",
+      accessorKey: 'user_name',
+      header: 'Username',
     },
     {
-      accessorKey: "email",
-      header: "Email",
+      accessorKey: 'email',
+      header: 'Email',
     },
     {
-      accessorKey: "mobile_no",
-      header: "Mobile",
+      accessorKey: 'mobile_no',
+      header: 'Mobile',
     },
     {
-      accessorKey: "role",
-      header: "Role",
+      accessorKey: 'role',
+      header: 'Role',
       cell: ({ row }) => <Badge variant="secondary">{row.original.role}</Badge>,
     },
     {
-      accessorKey: "socials",
-      header: "Socials",
+      accessorKey: 'socials',
+      header: 'Socials',
       cell: ({ row }) => (
         <div className="flex gap-2">
           {row.original.github && (
@@ -103,8 +103,8 @@ const MemberTable = ({
       ),
     },
     {
-      accessorKey: "permissions",
-      header: "Permissions",
+      accessorKey: 'permissions',
+      header: 'Permissions',
       cell: ({ row }) => (
         <div className="flex gap-2">
           {row.original.is_admin && <Badge variant="secondary">Admin</Badge>}
@@ -115,13 +115,13 @@ const MemberTable = ({
       ),
     },
     {
-      accessorKey: "created_at",
-      header: "Created At",
+      accessorKey: 'created_at',
+      header: 'Created At',
       cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString(),
     },
     {
-      id: "actions",
-      header: "Actions",
+      id: 'actions',
+      header: 'Actions',
       cell: ({ row }) => {
         const member = row.original;
         return (
@@ -160,17 +160,17 @@ const MemberTable = ({
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this member?")) return;
+    if (!confirm('Are you sure you want to delete this member?')) return;
     setLoading(true);
 
-    const { error } = await supabase.from("members").delete().eq("id", id);
+    const { error } = await supabase.from('members').delete().eq('id', id);
 
     if (error) {
-      toast.error("Failed to delete member");
+      toast.error('Failed to delete member');
       console.error(error);
     } else {
       setMembers((prev) => prev.filter((member) => member.id !== id));
-      toast.success("Member deleted successfully");
+      toast.success('Member deleted successfully');
     }
 
     setLoading(false);
@@ -202,7 +202,7 @@ const MemberTable = ({
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
+                    data-state={row.getIsSelected() && 'selected'}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

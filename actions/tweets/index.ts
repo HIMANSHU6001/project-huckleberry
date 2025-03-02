@@ -1,12 +1,12 @@
-"use server";
+'use server';
 
-import { prisma } from "@/lib/prisma";
-import { Tweet } from "@/types/admin/tweets";
-import { TwitterResponse } from "@/types/admin/tweets";
+import { prisma } from '@/lib/prisma';
+import { Tweet } from '@/types/admin/tweets';
+import { TwitterResponse } from '@/types/admin/tweets';
 
 const TWITTER_BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
 const TWITTER_USER_ID = process.env.TWITTER_USER_ID;
-const TWITTER_API_BASE = "https://api.x.com/2";
+const TWITTER_API_BASE = 'https://api.x.com/2';
 
 async function saveTweetToDB(tweet: Tweet) {
   const existingTweet = await prisma.tweet.findUnique({
@@ -32,7 +32,7 @@ async function saveTweetToDB(tweet: Tweet) {
 
 export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
   if (!TWITTER_BEARER_TOKEN || !TWITTER_USER_ID) {
-    throw new Error("Twitter configuration is incomplete");
+    throw new Error('Twitter configuration is incomplete');
   }
 
   try {
@@ -40,22 +40,22 @@ export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
       `${TWITTER_API_BASE}/users/${TWITTER_USER_ID}/tweets?` +
         new URLSearchParams({
           max_results: limit.toString(),
-          "tweet.fields":
-            "created_at,public_metrics,conversation_id,in_reply_to_user_id",
-          exclude: "retweets",
+          'tweet.fields':
+            'created_at,public_metrics,conversation_id,in_reply_to_user_id',
+          exclude: 'retweets',
         }),
       {
         headers: {
           Authorization: `Bearer ${TWITTER_BEARER_TOKEN}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
 
-    console.log("Tweets response:", tweetsResponse);
+    console.log('Tweets response:', tweetsResponse);
 
     if (!tweetsResponse.ok) {
-      throw new Error("Failed to fetch tweets-1");
+      throw new Error('Failed to fetch tweets-1');
     }
 
     const tweetsData: TwitterResponse = await tweetsResponse.json();
@@ -64,7 +64,7 @@ export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
       return [];
     }
 
-    console.log("All tweets:", tweetsData.data);
+    console.log('All tweets:', tweetsData.data);
 
     const tweets = tweetsData.data.map((tweet) => ({
       id: tweet.id,
@@ -79,7 +79,7 @@ export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
       in_reply_to_user_id: tweet.in_reply_to_user_id,
     }));
 
-    console.log("Tweets:", tweets);
+    console.log('Tweets:', tweets);
 
     for (const tweet of tweets) {
       await saveTweetToDB(tweet);
@@ -87,35 +87,35 @@ export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
 
     return tweets;
   } catch (error) {
-    console.error("Error fetching tweets:", error);
-    throw new Error("Failed to fetch tweets-2");
+    console.error('Error fetching tweets:', error);
+    throw new Error('Failed to fetch tweets-2');
   }
 }
 
 export async function fetchLatestTweet(): Promise<Tweet | null> {
   if (!TWITTER_BEARER_TOKEN || !TWITTER_USER_ID) {
-    throw new Error("Twitter configuration is incomplete");
+    throw new Error('Twitter configuration is incomplete');
   }
 
   try {
     const tweetsResponse = await fetch(
       `${TWITTER_API_BASE}/users/${TWITTER_USER_ID}/tweets?` +
         new URLSearchParams({
-          max_results: "1",
-          "tweet.fields":
-            "created_at,public_metrics,conversation_id,in_reply_to_user_id",
-          exclude: "retweets",
+          max_results: '1',
+          'tweet.fields':
+            'created_at,public_metrics,conversation_id,in_reply_to_user_id',
+          exclude: 'retweets',
         }),
       {
         headers: {
           Authorization: `Bearer ${TWITTER_BEARER_TOKEN}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
 
     if (!tweetsResponse.ok) {
-      throw new Error("Failed to fetch the latest tweet");
+      throw new Error('Failed to fetch the latest tweet');
     }
 
     const tweetsData: TwitterResponse = await tweetsResponse.json();
@@ -139,8 +139,8 @@ export async function fetchLatestTweet(): Promise<Tweet | null> {
 
     return tweetData;
   } catch (error) {
-    console.error("Error fetching the latest tweet:", error);
-    throw new Error("Failed to fetch the latest tweet");
+    console.error('Error fetching the latest tweet:', error);
+    throw new Error('Failed to fetch the latest tweet');
   }
 }
 
@@ -149,15 +149,15 @@ export async function getTotalTweetCount(): Promise<number> {
     const count = await prisma.tweet.count();
     return count;
   } catch (error) {
-    console.error("Error getting total tweet count:", error);
-    throw new Error("Failed to get total tweet count");
+    console.error('Error getting total tweet count:', error);
+    throw new Error('Failed to get total tweet count');
   }
 }
 
 export async function getTweetsFromDB(): Promise<Tweet[]> {
   try {
     const tweets = await prisma.tweet.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     const formattedTweets: Tweet[] = tweets.map((tweet) => ({
@@ -176,8 +176,8 @@ export async function getTweetsFromDB(): Promise<Tweet[]> {
 
     return formattedTweets;
   } catch (error) {
-    console.error("Error fetching tweets from DB:", error);
-    throw new Error("Failed to fetch tweets from DB");
+    console.error('Error fetching tweets from DB:', error);
+    throw new Error('Failed to fetch tweets from DB');
   }
 }
 
@@ -186,17 +186,17 @@ export async function updateFetchedAt(
   date?: Date
 ): Promise<Date> {
   try {
-    const defaultDate = new Date("2025-02-27T21:30:00Z");
+    const defaultDate = new Date('2025-02-27T21:30:00Z');
 
     // If date is provided, use it to update the record
     if (date) {
-      console.log("Updating fetchedAt at:-action", type, date.toISOString());
+      console.log('Updating fetchedAt at:-action', type, date.toISOString());
       const result = await prisma.tweetFetchLog.upsert({
         where: { type },
         update: { fetchedAt: date },
         create: { type, fetchedAt: date },
       });
-      console.log("Result-1:-action", result.fetchedAt.toISOString());
+      console.log('Result-1:-action', result.fetchedAt.toISOString());
       return result.fetchedAt;
     }
     // If no date is provided, retrieve the existing record or create a new one with defaultDate
@@ -207,7 +207,7 @@ export async function updateFetchedAt(
 
       if (existingLog && existingLog.fetchedAt) {
         console.log(
-          "Existing fetchedAt:-action",
+          'Existing fetchedAt:-action',
           existingLog.fetchedAt.toISOString()
         );
         return existingLog.fetchedAt;
@@ -215,12 +215,12 @@ export async function updateFetchedAt(
         const result = await prisma.tweetFetchLog.create({
           data: { type, fetchedAt: defaultDate },
         });
-        console.log("Result-2:-action", result.fetchedAt.toISOString());
+        console.log('Result-2:-action', result.fetchedAt.toISOString());
         return result.fetchedAt;
       }
     }
   } catch (error) {
-    console.error("Error updating fetchedAt:", error);
-    throw new Error("Failed to update fetchedAt");
+    console.error('Error updating fetchedAt:', error);
+    throw new Error('Failed to update fetchedAt');
   }
 }

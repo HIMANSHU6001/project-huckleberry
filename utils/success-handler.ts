@@ -1,9 +1,9 @@
 export const handleSuccess = <T extends { message: string | null }>(
-    data: T
+  data: T
 ) => {
-    return {
-        data,
-        statusCode: 200,
-        status: "success",
-    };
+  return {
+    data,
+    statusCode: 200,
+    status: 'success',
+  };
 };

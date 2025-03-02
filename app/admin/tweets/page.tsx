@@ -1,37 +1,37 @@
-"use client";
+'use client';
 
-import { StatCard } from "@/components/admin/dashboard/StatCard";
+import { StatCard } from '@/components/admin/dashboard/StatCard';
 import {
   Card,
   CardTitle,
   CardHeader,
   CardDescription,
-} from "@/components/ui/card";
-import TweetCard from "@/components/admin/tweets/TweetCardComponent";
-import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { Twitter } from "lucide-react";
+} from '@/components/ui/card';
+import TweetCard from '@/components/admin/tweets/TweetCardComponent';
+import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { Twitter } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
+} from '@/components/ui/carousel';
 import {
   fetchTweetCount,
   fetchTweetsFromDB,
   handleUpdateFetchedAt,
   handleFetchLatestTweet,
   handleFetchAllDSCTweets,
-} from "@/handlers/tweets/tweetHandlers";
-import { Tweet } from "@/types/admin/tweets";
+} from '@/handlers/tweets/tweetHandlers';
+import { Tweet } from '@/types/admin/tweets';
 
 export default function TweetsPage() {
   const [tweets, setTweets] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [lastFetchedDate, setLastFetchedDate] =
-    useState<string>("Not Fetched Yet");
+    useState<string>('Not Fetched Yet');
   const [fetchedTweets, setFetchedTweets] = useState<Tweet[]>([]);
   const [lastFetchedTimestamp, setLastFetchedTimestamp] = useState<Date | null>(
     null
@@ -46,15 +46,15 @@ export default function TweetsPage() {
     const tweets = await fetchTweetsFromDB();
     setFetchedTweets(tweets);
 
-    const fetchedDate = await handleUpdateFetchedAt("latest", new Date());
+    const fetchedDate = await handleUpdateFetchedAt('latest', new Date());
     if (fetchedDate) {
-      const formattedDate = new Date(fetchedDate).toLocaleString("en-GB", {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
+      const formattedDate = new Date(fetchedDate).toLocaleString('en-GB', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
         hour12: true,
       });
       setLastFetchedDate(formattedDate);
@@ -73,22 +73,22 @@ export default function TweetsPage() {
         const tweets = await fetchTweetsFromDB();
         setFetchedTweets(tweets);
 
-        const fetchedDate = await handleUpdateFetchedAt("latest");
+        const fetchedDate = await handleUpdateFetchedAt('latest');
         if (fetchedDate) {
-          const formattedDate = new Date(fetchedDate).toLocaleString("en-GB", {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
+          const formattedDate = new Date(fetchedDate).toLocaleString('en-GB', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
             hour12: true,
           });
           setLastFetchedDate(formattedDate);
           setLastFetchedTimestamp(new Date(fetchedDate));
         }
       } catch (error) {
-        console.error("Error initializing data:", error);
+        console.error('Error initializing data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -116,18 +116,18 @@ export default function TweetsPage() {
                 .
               </li>
               <li>
-                We can make{" "}
+                We can make{' '}
                 <b className="text-cyan-300">1 request / 15 minutes</b>.
               </li>
               <li>
-                For rate limiting purposes, a{" "}
+                For rate limiting purposes, a{' '}
                 <b className="text-cyan-300">2 hour cooldown</b> is enforced
                 between fetches.
               </li>
               <li>
                 Use <b className="text-cyan-300">Fetch All Tweets</b> when the
-                project is deployed and used by the public. This will{" "}
-                <b className="text-cyan-300">fetch 20 latest tweets</b>.{" "}
+                project is deployed and used by the public. This will{' '}
+                <b className="text-cyan-300">fetch 20 latest tweets</b>.{' '}
                 <b className="text-red-400 text-xl">
                   ( Do not use frequently )
                 </b>
@@ -168,7 +168,7 @@ export default function TweetsPage() {
             disabled={isLoading}
             className="w-full text-sm lg:text-base hover:bg-green-400 transition-all duration-300"
           >
-            {isLoading ? "Fetching..." : "Fetch Latest Tweet"}
+            {isLoading ? 'Fetching...' : 'Fetch Latest Tweet'}
           </Button>
           <Button
             onClick={() =>
@@ -181,7 +181,7 @@ export default function TweetsPage() {
             disabled={isLoading}
             className="w-full text-sm lg:text-base hover:bg-red-400 transition-all duration-300 mt-2 sm:mt-0"
           >
-            {isLoading ? "Fetching..." : "Fetch All Tweets"}
+            {isLoading ? 'Fetching...' : 'Fetch All Tweets'}
           </Button>
         </div>
       </div>

@@ -12,10 +12,10 @@ interface Project {
 
 const formatProjectName = (name: string): string =>
   name
-    .replace(/-/g, " ")
-    .split(" ")
+    .replace(/-/g, ' ')
+    .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+    .join(' ');
 
 const filterUpcomingEvents = (events: Event[]): Event[] => {
   const now = new Date();
