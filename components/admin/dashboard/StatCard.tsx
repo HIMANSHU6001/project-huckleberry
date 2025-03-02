@@ -1,7 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import Loader from "@/components/ui/loader";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import Loader from '@/components/ui/loader';
+import Link from 'next/link';
 
 export const StatCard = ({
   title,
@@ -9,7 +15,7 @@ export const StatCard = ({
   icon: Icon,
   link,
   linkText,
-  isLoading
+  isLoading,
 }: {
   title: string;
   value: number | string;
@@ -26,9 +32,7 @@ export const StatCard = ({
       <Icon className="h-4 w-4 text-muted-foreground" />
     </CardHeader>
     <CardContent>
-      <div className="text-2xl font-gist">
-        {isLoading ? <Loader /> : value}
-      </div>
+      <div className="text-2xl font-gist">{isLoading ? <Loader /> : value}</div>
     </CardContent>
     {link && linkText && (
       <CardFooter>

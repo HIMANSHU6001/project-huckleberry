@@ -1,6 +1,7 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+
   devServer: {
     https: {
       key: "./localhost-key.pem",

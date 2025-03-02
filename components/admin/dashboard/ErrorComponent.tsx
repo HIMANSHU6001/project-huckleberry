@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const ErrorDisplay = ({ message }: { message: string }) => (
   <div className="min-h-screen bg-background p-8 flex items-center justify-center">

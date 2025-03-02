@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { getAllBlogs } from "@/actions/blogs";
-import React, { useEffect, useState } from "react";
-import BlogCard from "./blog-card";
-import { Container } from "@/components/ui/container";
+import { getAllBlogs } from '@/actions/blogs';
+import React, { useEffect, useState } from 'react';
+import BlogCard from './blog-card';
+import { Container } from '@/components/ui/container';
 import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
-} from "@/components/ui/page-header";
+} from '@/components/ui/page-header';
 
 const Blogs = () => {
   const [blogList, setBlogList] = useState([]);
@@ -16,7 +16,7 @@ const Blogs = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       const response = await getAllBlogs();
-      if ("data" in response) {
+      if ('data' in response) {
         console.log(response.data.blogs.items);
         setBlogList(response.data.blogs.items);
       } else {
@@ -37,9 +37,7 @@ const Blogs = () => {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {blogList.length > 0 &&
-          blogList.map((blog: any) => (
-            <BlogCard blog={blog} key={blog.link} />
-          ))}
+          blogList.map((blog: any) => <BlogCard blog={blog} key={blog.link} />)}
       </div>
     </Container>
   );

@@ -1,24 +1,26 @@
-"use client";
+'use client';
 
-import { Calendar, Layers, Users } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState, useEffect } from "react";
-import { getAllEvents } from "@/actions/events";
-import { getAllMembers } from "@/actions/members";
-import { getPublishedRepos } from "@/actions/projects";
-import { StatCard } from "@/components/admin/dashboard/StatCard";
-import { RecentProjectsList } from "@/components/admin/dashboard/RecentPorjectList";
-import { UpcomingEventsList } from "@/components/admin/dashboard/UpcomingEventList";
-import { ErrorDisplay } from "@/components/admin/dashboard/ErrorComponent";
+import { Calendar, Layers, Users, Twitter } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { getAllEvents } from '@/actions/events';
+import { getAllMembers } from '@/actions/members';
+import { getPublishedRepos } from '@/actions/projects';
+import { getTotalTweetCount } from '@/actions/tweets';
+import { StatCard } from '@/components/admin/dashboard/StatCard';
+import { RecentProjectsList } from '@/components/admin/dashboard/RecentPorjectList';
+import { UpcomingEventsList } from '@/components/admin/dashboard/UpcomingEventList';
+import { ErrorDisplay } from '@/components/admin/dashboard/ErrorComponent';
 import {
   filterUpcomingEvents,
   mapUpcomingEvents,
   mapPublishedProjects,
-} from "@/utils/dashboard-function";
+} from '@/utils/dashboard-function';
 
 interface DashboardStats {
   totalMembers: number;
   upcomingEvents: number;
+  tweetCount: number;
   recentProjects: Array<{
     id: string;
     name: string;
@@ -35,6 +37,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>({
     totalMembers: 0,
     upcomingEvents: 0,
+    tweetCount: 0,
     recentProjects: [],
     upcomingEventsList: [],
   });
@@ -44,44 +47,52 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [membersResponse, eventsResponse, publishedRepos] =
-          await Promise.all([
-            getAllMembers(),
-            getAllEvents(),
-            getPublishedRepos(),
-          ]);
+        const [
+          membersResponse,
+          eventsResponse,
+          publishedRepos,
+          tweetCountResponse,
+        ] = await Promise.all([
+          getAllMembers(),
+          getAllEvents(),
+          getPublishedRepos(),
+          getTotalTweetCount(),
+        ]);
 
-        // Validate responses
         if (
-          membersResponse.status !== "success" ||
-          eventsResponse.status !== "success"
+          membersResponse.status !== 'success' ||
+          eventsResponse.status !== 'success'
         ) {
-          throw new Error("Failed to fetch data");
+          throw new Error('Failed to fetch data');
         }
 
-        const members = 'data' in membersResponse ? membersResponse.data.data : [];
-        const events = 'data' in eventsResponse ? eventsResponse.data.events : [];
-        const publishedProjects = 'data' in publishedRepos ? publishedRepos.data.data.map((project: any) => ({
-          ...project,
-          published_at: project.published_at.toISOString(),
-        })) : [];
+        const members =
+          'data' in membersResponse ? membersResponse.data.data : [];
+        const events =
+          'data' in eventsResponse ? eventsResponse.data.events : [];
+        const publishedProjects =
+          'data' in publishedRepos
+            ? publishedRepos.data.data.map((project: any) => ({
+                ...project,
+                published_at: project.published_at.toISOString(),
+              }))
+            : [];
 
-        // Filter and prepare upcoming events
         const upcomingEvents = filterUpcomingEvents(events);
 
-        // Update stats state
         setStats({
           totalMembers: members.length,
           upcomingEvents: upcomingEvents.length,
+          tweetCount: tweetCountResponse,
           recentProjects: mapPublishedProjects(publishedProjects),
           upcomingEventsList: mapUpcomingEvents(upcomingEvents),
         });
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error('Error fetching dashboard data:', error);
         setError(
           error instanceof Error
             ? error.message
-            : "Failed to load dashboard data"
+            : 'Failed to load dashboard data'
         );
       } finally {
         setIsLoading(false);
@@ -123,6 +134,14 @@ export default function DashboardPage() {
             icon={Calendar}
             link="/admin/events"
             linkText="View calendar →"
+            isLoading={isLoading}
+          />
+          <StatCard
+            title="Tweets"
+            value={stats.tweetCount}
+            icon={Twitter}
+            link="/admin/tweets"
+            linkText="View all Tweets →"
             isLoading={isLoading}
           />
         </div>
