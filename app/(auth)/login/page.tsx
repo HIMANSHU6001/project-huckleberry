@@ -1,35 +1,37 @@
-'use client';
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { login, signup } from '@/actions/auth';
+"use client";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { login, signup } from "@/actions/auth";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+  CardTitle
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { formFields } from '@/config/auth';
-import { toast } from 'sonner';
-import { ActionType } from '@/types/auth';
+  FormMessage
+} from "@/components/ui/form";
+import { formFields } from "@/config/auth";
+import { toast } from "sonner";
+import { ActionType } from "@/types/auth";
+import { signInWithGoogle } from "@/utils/supabase/signinwithgoogle";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const form = useForm({
     defaultValues: {
-      email: '',
-      password: '',
-    },
+      email: "",
+      password: ""
+    }
   });
 
   const onSubmit = async (action: ActionType) => {
@@ -40,9 +42,9 @@ export default function LoginPage() {
     setLoading(true);
     const response = await action(formData);
     setLoading(false);
-    if (response.status === 'error') {
+    if (response.status === "error") {
       console.error(response);
-      toast.error(response.error.message || 'An error occurred');
+      toast.error(response.error.message || "An error occurred");
     }
   };
 
@@ -61,11 +63,11 @@ export default function LoginPage() {
                 <FormField
                   key={field.name}
                   control={form.control}
-                  name={field.name as 'email' | 'password'}
+                  name={field.name as "email" | "password"}
                   rules={{
                     required: field.required,
                     pattern: field.pattern,
-                    minLength: field.minLength,
+                    minLength: field.minLength
                   }}
                   render={({ field: formField }) => (
                     <FormItem>
@@ -85,16 +87,33 @@ export default function LoginPage() {
             </form>
           </Form>
         </CardContent>
-        <CardFooter className="flex gap-4 justify-end">
+
+        <CardFooter className="flex flex-col gap-4">
           <Button
             variant="outline"
             onClick={() => onSubmit(signup)}
+            className="w-full"
             disabled={loading}
           >
-            {loading ? 'Loading...' : 'Sign up'}
+            {loading ? "Loading..." : "Sign up"}
           </Button>
-          <Button onClick={() => onSubmit(login)} disabled={loading}>
-            {loading ? 'Loading...' : 'Log in'}
+          <Button
+            onClick={() => onSubmit(login)}
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Log in"}
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => {
+              setGoogleLoading(!googleLoading);
+              signInWithGoogle();
+              setGoogleLoading(!googleLoading);
+            }}
+            className="w-full font-normal"
+          >
+            Login with google
           </Button>
         </CardFooter>
       </Card>
