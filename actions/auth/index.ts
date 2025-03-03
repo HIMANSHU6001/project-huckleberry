@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-
+import { signIn } from '@/auth';
 import { createClient } from '@/utils/supabase/server';
 import { FormData } from '@/types/auth';
 
@@ -50,4 +50,8 @@ export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect('/login');
+}
+
+export async function loginWithGoogle() {
+  await signIn('google');
 }

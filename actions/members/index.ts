@@ -54,3 +54,16 @@ export async function deleteMember(id: string) {
     return handleError(error);
   }
 }
+
+export async function getMemberByEmail(email: string) {
+  try {
+    console.log('email', email);
+    const member = await prisma.member.findFirst({ where: { email } });
+    return handleSuccess({
+      data: member,
+      message: 'Member fetched successfully',
+    });
+  } catch (error) {
+    return handleError(error);
+  }
+}

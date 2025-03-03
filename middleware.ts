@@ -1,16 +1,42 @@
+import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 
-import { type NextRequest } from "next/server";
-// import { updateSession } from "./utils/supabase/middleware";
+export async function middleware(request) {
+  const publicRoutes = ['/', '/team'];
 
-export async function middleware(request: NextRequest) {
-  if (request) {
-    console.log("hi");
+  if (publicRoutes.includes(request.nextUrl.pathname)) {
+    return NextResponse.next();
   }
-  return null;
+
+  const session = await auth();
+  console.log('session', session);
+
+  if (session && session.user && request.nextUrl.pathname === '/login') {
+    if (session.user.isAdmin) {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    } else {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+  }
+
+  if (!session || !session.user) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!session.user.isAdmin) {
+      return NextResponse.redirect(new URL('/profile', request.url));
+    }
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/dashboard/:path*',
+    '/profile/:path*',
+    '/admin/:path*',
+    '/((?!api|login|register|unauthorized|_next/static|_next/image|favicon.ico).*)',
   ],
 };
