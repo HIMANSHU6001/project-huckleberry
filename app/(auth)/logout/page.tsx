@@ -1,14 +1,14 @@
 'use client';
 import React, { useEffect } from 'react';
+import { signOut } from 'next-auth/react';
 
-import { logout } from '@/actions/auth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
 const LogoutPage: React.FC = () => {
   useEffect(() => {
     // @ts-ignore
-    logout();
+    signOut();
   }, []);
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background">

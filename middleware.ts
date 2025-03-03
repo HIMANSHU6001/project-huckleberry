@@ -9,7 +9,6 @@ export async function middleware(request) {
   }
 
   const session = await auth();
-  console.log('session', session);
 
   if (session && session.user && request.nextUrl.pathname === '/login') {
     if (session.user.isAdmin) {
@@ -17,6 +16,10 @@ export async function middleware(request) {
     } else {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
+  }
+
+  if (request.nextUrl.pathname === '/login' && !session) {
+    return NextResponse.next();
   }
 
   if (!session || !session.user) {
@@ -34,6 +37,7 @@ export async function middleware(request) {
 
 export const config = {
   matcher: [
+    '/login',
     '/dashboard/:path*',
     '/profile/:path*',
     '/admin/:path*',

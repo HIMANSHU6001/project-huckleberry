@@ -52,6 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const memberResponse = await prisma.member.findFirst({
             where: { email: user.email },
           });
+
           if (memberResponse?.id) {
             token.memberId = memberResponse.id;
             token.isAdmin = memberResponse.is_admin;
