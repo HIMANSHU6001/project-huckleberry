@@ -19,9 +19,21 @@ export async function getAllMembers() {
 
 export async function createMember(member: Member) {
   try {
+    console.log('creating member');
+    const memberData = { ...member };
+    if (memberData.id) {
+      const existingMember = await prisma.member.findUnique({
+        where: { id: memberData.id },
+      });
+      if (existingMember) {
+        return updateMember(memberData);
+      }
+    }
+
     const newMember = await prisma.member.create({
-      data: member,
+      data: memberData,
     });
+
     return handleSuccess({
       newMember,
       message: 'Member created successfully',
@@ -33,6 +45,7 @@ export async function createMember(member: Member) {
 
 export async function updateMember(member: Member) {
   try {
+    console.log(member.id);
     const updatedMember = await prisma.member.update({
       where: { id: member.id },
       data: member,
@@ -48,22 +61,22 @@ export async function updateMember(member: Member) {
 
 export async function deleteMember(id: string) {
   try {
-    await prisma.member.delete({ where: { id } });
+    if (!id || typeof id !== 'string') {
+      console.error('Invalid member ID for deletion:', id);
+      return handleError(new Error('Valid member ID is required for deletion'));
+    }
+
+    console.log('Server: Deleting member with ID:', id);
+
+    const memberId = String(id);
+
+    await prisma.member.delete({
+      where: { id: memberId },
+    });
+
     return handleSuccess({ message: 'Member deleted successfully' });
   } catch (error) {
-    return handleError(error);
-  }
-}
-
-export async function getMemberByEmail(email: string) {
-  try {
-    console.log('email', email);
-    const member = await prisma.member.findFirst({ where: { email } });
-    return handleSuccess({
-      data: member,
-      message: 'Member fetched successfully',
-    });
-  } catch (error) {
+    console.error('Server: Error deleting member:', error);
     return handleError(error);
   }
 }

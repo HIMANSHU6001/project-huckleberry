@@ -158,18 +158,30 @@ const MemberTable = ({
   };
 
   const handleDelete = async (id: string) => {
+    if (!id) {
+      toast.error('Member ID is missing');
+      return;
+    }
+
     if (!confirm('Are you sure you want to delete this member?')) return;
     setLoading(true);
 
-    const result = await deleteMember(id);
-    if (result.status === 'success') {
-      setMembers((prev) => prev.filter((member) => member.id !== id));
-      toast.success('Member deleted successfully');
-    } else {
-      toast.error('Failed to delete member');
-    }
+    console.log('Deleting member with ID:', id); // This will help debug
 
-    setLoading(false);
+    try {
+      const result = await deleteMember(id);
+      if (result.status === 'success') {
+        setMembers((prev) => prev.filter((member) => member.id !== id));
+        toast.success('Member deleted successfully');
+      } else {
+        toast.error(result.status || 'Failed to delete member');
+      }
+    } catch (error) {
+      console.error('Error deleting member:', error);
+      toast.error('An error occurred while deleting the member');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
