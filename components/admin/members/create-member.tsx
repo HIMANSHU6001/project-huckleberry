@@ -35,66 +35,8 @@ import {
   MemberFormData,
   MemberRegistrationModalProps,
 } from '@/types/admin/members/supabase';
-import { roleOptions } from '@/config/admin/members/constants';
-
-// Cloudinary upload function
-export const uploadToCloudinary = async (image: File): Promise<string> => {
-  if (!(image instanceof File)) {
-    throw new Error('Invalid image file.');
-  }
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string;
-  const uploadPreset = process.env
-    .NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string;
-  const url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
-  const form = new FormData();
-  form.append('file', image);
-  form.append('upload_preset', uploadPreset);
-  try {
-    const response = await axios.post<{ url: string }>(url, form);
-    if (response.status !== 200) {
-      throw new Error('Failed to upload image!');
-    }
-    return response.data.url;
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-};
-
-// Define the validation schema using Zod
-const memberSchema = z.object({
-  profile_photo: z.string().optional(), // Make it optional for initial form validation
-  user_name: z.string().min(1, 'Username is required'),
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  mobile_no: z.coerce
-    .number({
-      required_error: 'Mobile number is required',
-      invalid_type_error: 'Mobile number must be a number',
-    })
-    .refine((val) => {
-      const numStr = val.toString();
-      return numStr.length === 10;
-    }, 'Mobile number must be exactly 10 digits'),
-  role: z.string().min(1, 'Role is required'),
-  github: z
-    .string()
-    .url('Enter a valid GitHub URL')
-    .optional()
-    .or(z.literal('')), // Make GitHub optional, allowing empty string
-  linkedin: z
-    .string()
-    .url('Enter a valid LinkedIn URL')
-    .min(1, 'LinkedIn profile is required'),
-  twitter: z
-    .string()
-    .url('Enter a valid Twitter URL')
-    .min(1, 'Twitter profile is required'),
-  other_socials: z.array(z.string()).default([]),
-  caption: z.string().nullable().optional(),
-  introduction: z.string().min(1, 'Introduction is required'),
-  is_admin: z.boolean().default(false),
-  is_super_admin: z.boolean().default(false),
-});
+import { memberSchema, roleOptions } from '@/config/admin/members/constants';
+import { uploadToCloudinary } from '@/utils';
 
 type MemberFormSchema = z.infer<typeof memberSchema>;
 
@@ -131,15 +73,12 @@ const MemberRegistrationModal = ({
     defaultValues: defaultValues || defaultFormValues,
   });
 
-  // Handle image upload
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
-      // Create a preview URL
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
-      // Don't set the form value yet, it will be uploaded on submit
     }
   };
 
@@ -147,17 +86,14 @@ const MemberRegistrationModal = ({
     try {
       const finalData = { ...data };
 
-      // Check if we're using an existing image or uploading a new one
       if (imageFile) {
         setUploadLoading(true);
         try {
-          // Upload the image to Cloudinary
           const imageUrl = await uploadToCloudinary(imageFile);
-          // Update the form data with the new image URL
           finalData.profile_photo = imageUrl;
         } catch (error) {
           console.error('Error uploading image:', error);
-          return; // Stop submission if image upload fails
+          return;
         } finally {
           setUploadLoading(false);
         }
@@ -166,32 +102,26 @@ const MemberRegistrationModal = ({
         !finalData.profile_photo &&
         !defaultValues?.profile_photo
       ) {
-        // No image selected and no existing image
         alert('Please select a profile photo');
         return;
       } else if (!finalData.profile_photo && defaultValues?.profile_photo) {
-        // If editing and keeping the existing image
         finalData.profile_photo = defaultValues.profile_photo;
       }
 
-      // Ensure profile_photo is not empty after all checks
       if (!finalData.profile_photo) {
         alert('Profile photo is required');
         return;
       }
 
-      // Submit the form data with the updated profile_photo
       onSubmit(finalData);
     } catch (error) {
       console.error('Error in form submission:', error);
     }
   };
 
-  // Set initial image preview if editing and there's an existing URL
   React.useEffect(() => {
     if (defaultValues?.profile_photo) {
       setImagePreview(defaultValues.profile_photo);
-      // Pre-set the form field value for editing scenarios
       form.setValue('profile_photo', defaultValues.profile_photo);
     }
   }, [defaultValues, form]);
@@ -240,7 +170,6 @@ const MemberRegistrationModal = ({
                             onChange={handleImageChange}
                             className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                           />
-                          {/* Hidden input to maintain form state */}
                           <Input type="hidden" {...field} />
                           {isEditing && !imageFile && field.value && (
                             <p className="text-sm text-muted-foreground">
@@ -444,7 +373,6 @@ const MemberRegistrationModal = ({
                 )}
               />
 
-              {/* Super Admin toggle is commented out in original code */}
               {/* <FormField
                   control={form.control}
                   name="is_super_admin"

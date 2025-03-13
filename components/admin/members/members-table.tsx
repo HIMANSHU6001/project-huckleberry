@@ -166,8 +166,6 @@ const MemberTable = ({
     if (!confirm('Are you sure you want to delete this member?')) return;
     setLoading(true);
 
-    console.log('Deleting member with ID:', id); // This will help debug
-
     try {
       const result = await deleteMember(id);
       if (result.status === 'success') {
