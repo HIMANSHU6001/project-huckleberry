@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import {
   Dialog,
   DialogContent,
@@ -31,8 +33,11 @@ import { Switch } from '@/components/ui/switch';
 import {
   MemberFormData,
   MemberRegistrationModalProps,
-} from '@/types/admin/members';
-import { roleOptions } from '@/config/admin/members';
+} from '@/types/admin/members/supabase';
+import { memberSchema, roleOptions } from '@/config/admin/members/constants';
+import { uploadToCloudinary } from '@/utils';
+
+type MemberFormSchema = z.infer<typeof memberSchema>;
 
 const MemberRegistrationModal = ({
   open,
@@ -42,7 +47,11 @@ const MemberRegistrationModal = ({
   isEditing = false,
   isLoading = false,
 }: MemberRegistrationModalProps) => {
-  const defaultFormValues: MemberFormData = {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
+
+  const defaultFormValues: Partial<MemberFormData> = {
     profile_photo: '',
     user_name: '',
     email: '',
@@ -58,23 +67,63 @@ const MemberRegistrationModal = ({
     is_super_admin: false,
   };
 
-  const form = useForm<MemberFormData>({
+  const form = useForm<MemberFormSchema>({
+    resolver: zodResolver(memberSchema),
     defaultValues: defaultValues || defaultFormValues,
   });
 
-  const handleSubmit = (data: MemberFormData) => {
-    const formattedData = {
-      ...data,
-      mobile_no: Number(data.mobile_no),
-    };
-    onSubmit(formattedData);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
   };
 
-  useEffect(() => {
-    if (defaultValues) {
-      form.reset(defaultValues);
+  const handleSubmit = async (data: MemberFormSchema) => {
+    try {
+      const finalData = { ...data };
+
+      if (imageFile) {
+        setUploadLoading(true);
+        try {
+          const imageUrl = await uploadToCloudinary(imageFile);
+          finalData.profile_photo = imageUrl;
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          return;
+        } finally {
+          setUploadLoading(false);
+        }
+      } else if (
+        !imageFile &&
+        !finalData.profile_photo &&
+        !defaultValues?.profile_photo
+      ) {
+        alert('Please select a profile photo');
+        return;
+      } else if (!finalData.profile_photo && defaultValues?.profile_photo) {
+        finalData.profile_photo = defaultValues.profile_photo;
+      }
+
+      if (!finalData.profile_photo) {
+        alert('Profile photo is required');
+        return;
+      }
+
+      onSubmit(finalData);
+    } catch (error) {
+      console.error('Error in form submission:', error);
     }
-  }, [defaultValues]);
+  };
+
+  React.useEffect(() => {
+    if (defaultValues?.profile_photo) {
+      setImagePreview(defaultValues.profile_photo);
+      form.setValue('profile_photo', defaultValues.profile_photo);
+    }
+  }, [defaultValues, form]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -99,16 +148,43 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="profile_photo"
-                rules={{
-                  required: 'Profile photo URL is required',
-                }}
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Profile Photo URL</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
+                  <FormItem className="col-span-2">
+                    <FormLabel>Profile Photo*</FormLabel>
+                    <div className="flex flex-col items-center space-y-4">
+                      {imagePreview && (
+                        <div className="relative w-32 h-32 rounded-full overflow-hidden">
+                          <img
+                            src={imagePreview}
+                            alt="Profile preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <FormControl>
+                        <div className="flex flex-col items-center gap-2">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                          />
+                          <Input type="hidden" {...field} />
+                          {isEditing && !imageFile && field.value && (
+                            <p className="text-sm text-muted-foreground">
+                              Current photo URL: {field.value.substring(0, 30)}
+                              ...
+                            </p>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormDescription>
+                        {isEditing
+                          ? 'Upload a new profile photo or keep the existing one.'
+                          : 'Upload a profile photo. This is required.'}
+                      </FormDescription>
+                      <FormMessage />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -116,10 +192,9 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="user_name"
-                rules={{ required: 'Username is required' }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Username*</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -131,16 +206,9 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="email"
-                rules={{
-                  required: 'Email is required',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Invalid email address',
-                  },
-                }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Email*</FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
                     </FormControl>
@@ -152,17 +220,18 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="mobile_no"
-                rules={{
-                  required: 'Mobile number is required',
-                }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Mobile Number</FormLabel>
+                    <FormLabel>Mobile Number*</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
+                        type="tel"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '');
+                          field.onChange(value ? parseInt(value, 10) : '');
+                        }}
+                        value={field.value === 0 ? '' : field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -173,13 +242,13 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="role"
-                rules={{ required: 'Role is required' }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel>Role*</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -206,15 +275,15 @@ const MemberRegistrationModal = ({
                 <FormField
                   control={form.control}
                   name="github"
-                  rules={{
-                    required: 'GitHub profile is required',
-                  }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>GitHub Profile</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
+                      <FormDescription>
+                        Optional: You can leave this blank if not available
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -223,12 +292,9 @@ const MemberRegistrationModal = ({
                 <FormField
                   control={form.control}
                   name="linkedin"
-                  rules={{
-                    required: 'LinkedIn profile is required',
-                  }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>LinkedIn Profile</FormLabel>
+                      <FormLabel>LinkedIn Profile*</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -240,12 +306,9 @@ const MemberRegistrationModal = ({
                 <FormField
                   control={form.control}
                   name="twitter"
-                  rules={{
-                    required: 'Twitter profile is required',
-                  }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Twitter Profile</FormLabel>
+                      <FormLabel>Twitter Profile*</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -274,10 +337,9 @@ const MemberRegistrationModal = ({
               <FormField
                 control={form.control}
                 name="introduction"
-                rules={{ required: 'Introduction is required' }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Introduction</FormLabel>
+                    <FormLabel>Introduction*</FormLabel>
                     <FormControl>
                       <Textarea {...field} className="min-h-[100px]" />
                     </FormControl>
@@ -333,8 +395,12 @@ const MemberRegistrationModal = ({
             </div>
 
             <DialogFooter>
-              <Button type="submit" disabled={isLoading}>
-                {isEditing ? 'Save Changes' : 'Add Member'}
+              <Button type="submit" disabled={isLoading || uploadLoading}>
+                {uploadLoading
+                  ? 'Uploading...'
+                  : isEditing
+                    ? 'Save Changes'
+                    : 'Add Member'}
               </Button>
             </DialogFooter>
           </form>
