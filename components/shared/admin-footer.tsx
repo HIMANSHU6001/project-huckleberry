@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function AdminFooter() {
   return (
-    <footer className="mt-12 text-center text-gdg-gray/70 text-sm">
+    <footer className="pt-12 pb-8 text-center text-gdg-gray/70 text-sm ">
       <div className="w-full max-w-md h-1 rounded-full mx-auto mb-4 flex overflow-hidden">
         <div className="w-1/4 bg-gdg-blue"></div>
         <div className="w-1/4 bg-gdg-red"></div>

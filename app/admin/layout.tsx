@@ -10,7 +10,9 @@ export default function AdminLayout({
   return (
     <>
       <BackgroundElements />
-      {children}
+      <main className="min-h-[85dvh] bg-gradient-to-br from-white to-blue-50">
+        {children}
+      </main>
       <AdminFooter />
     </>
   );
