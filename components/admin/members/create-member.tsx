@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -33,9 +33,10 @@ import { Switch } from '@/components/ui/switch';
 import {
   MemberFormData,
   MemberRegistrationModalProps,
-} from '@/types/admin/members/supabase';
+} from '@/types/admin/members';
 import { memberSchema, roleOptions } from '@/config/admin/members/constants';
 import { uploadToCloudinary } from '@/utils';
+import Image from 'next/image';
 
 type MemberFormSchema = z.infer<typeof memberSchema>;
 
@@ -118,7 +119,7 @@ const MemberRegistrationModal = ({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (defaultValues?.profile_photo) {
       setImagePreview(defaultValues.profile_photo);
       form.setValue('profile_photo', defaultValues.profile_photo);
@@ -154,10 +155,12 @@ const MemberRegistrationModal = ({
                     <div className="flex flex-col items-center space-y-4">
                       {imagePreview && (
                         <div className="relative w-32 h-32 rounded-full overflow-hidden">
-                          <img
+                          <Image
                             src={imagePreview}
                             alt="Profile preview"
                             className="w-full h-full object-cover"
+                            height={128}
+                            width={128}
                           />
                         </div>
                       )}

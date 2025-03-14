@@ -62,7 +62,7 @@ Following technologies and libraries are used for the development of this websit
 - [NextJs]()
 - [Tailwind]()
 - [Prisma]()
-- [Supabase]()
+- [Auth.js]()
 
 ## Getting Started
 

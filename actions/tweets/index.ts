@@ -9,27 +9,22 @@ const TWITTER_USER_ID = process.env.TWITTER_USER_ID;
 const TWITTER_API_BASE = 'https://api.x.com/2';
 
 async function saveTweetsToDB(tweets: Tweet[]) {
-  for (const tweet of tweets) {
-    const existingTweet = await prisma.tweet.findUnique({
-      where: { id: tweet.id },
-    });
+  const tweetData = tweets.map((tweet) => ({
+    id: tweet.id,
+    text: tweet.text,
+    createdAt: new Date(tweet.created_at),
+    retweetCount: tweet.public_metrics.retweet_count,
+    replyCount: tweet.public_metrics.reply_count,
+    likeCount: tweet.public_metrics.like_count,
+    quoteCount: tweet.public_metrics.quote_count,
+    conversationId: tweet.conversation_id,
+    inReplyToUserId: tweet.in_reply_to_user_id,
+  }));
 
-    if (!existingTweet) {
-      await prisma.tweet.create({
-        data: {
-          id: tweet.id,
-          text: tweet.text,
-          createdAt: new Date(tweet.created_at),
-          retweetCount: tweet.public_metrics.retweet_count,
-          replyCount: tweet.public_metrics.reply_count,
-          likeCount: tweet.public_metrics.like_count,
-          quoteCount: tweet.public_metrics.quote_count,
-          conversationId: tweet.conversation_id,
-          inReplyToUserId: tweet.in_reply_to_user_id,
-        },
-      });
-    }
-  }
+  await prisma.tweet.createMany({
+    data: tweetData,
+    skipDuplicates: true,
+  });
 }
 
 export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
@@ -55,21 +50,16 @@ export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
       }
     );
 
-    console.log('Tweets response:', tweetsResponse);
-
     if (!tweetsResponse.ok) {
       console.error('Failed to fetch tweets-1');
       return [];
     }
 
     const tweetsData: TwitterResponse = await tweetsResponse.json();
-    console.log('Tweets data:', tweetsData);
 
     if (!tweetsData.data) {
       return [];
     }
-
-    console.log('All tweets:', tweetsData.data);
 
     const tweets = tweetsData.data.map((tweet) => ({
       id: tweet.id,
@@ -83,8 +73,6 @@ export async function fetchAllDSCTweets(limit: number = 20): Promise<Tweet[]> {
       conversation_id: tweet.conversation_id,
       in_reply_to_user_id: tweet.in_reply_to_user_id,
     }));
-
-    console.log('Tweets:', tweets);
 
     await saveTweetsToDB(tweets);
 
@@ -154,7 +142,7 @@ export async function getTotalTweetCount(): Promise<number> {
     const count = await prisma.tweet.count();
     return count;
   } catch (error) {
-    console.log('Error getting total tweet count:', error);
+    console.error('Error getting total tweet count:', error);
     return 0;
   }
 }
@@ -195,13 +183,11 @@ export async function updateFetchedAt(
 
     // If date is provided, use it to update the record
     if (date) {
-      console.log('Updating fetchedAt at:-action', type, date.toISOString());
       const result = await prisma.tweetFetchLog.upsert({
         where: { type },
         update: { fetchedAt: date },
         create: { type, fetchedAt: date },
       });
-      console.log('Result-1:-action', result.fetchedAt.toISOString());
       return result.fetchedAt;
     }
     // If no date is provided, retrieve the existing record or create a new one with defaultDate
@@ -211,16 +197,12 @@ export async function updateFetchedAt(
       });
 
       if (existingLog && existingLog.fetchedAt) {
-        console.log(
-          'Existing fetchedAt:-action',
-          existingLog.fetchedAt.toISOString()
-        );
         return existingLog.fetchedAt;
       } else {
         const result = await prisma.tweetFetchLog.create({
           data: { type, fetchedAt: defaultDate },
         });
-        console.log('Result-2:-action', result.fetchedAt.toISOString());
+
         return result.fetchedAt;
       }
     }
