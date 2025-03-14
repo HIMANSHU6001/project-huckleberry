@@ -12,7 +12,6 @@ import { UpcomingEventsList } from '@/components/admin/dashboard/upcoming-event-
 import { ErrorDisplay } from '@/components/admin/dashboard/error-component';
 import GoogleColorsBar from '@/components/shared/google-colors-bar';
 import {
-  filterUpcomingEvents,
   mapUpcomingEvents,
   mapPublishedProjects,
 } from '@/utils/dashboard-function';

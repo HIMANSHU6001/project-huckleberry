@@ -1,4 +1,9 @@
-export const handleSuccess = <T extends { message: string | null }>(
+export const handleSuccess = <
+  T extends {
+    profile_photo: string;
+    message: string | null;
+  },
+>(
   data: T
 ) => {
   return {

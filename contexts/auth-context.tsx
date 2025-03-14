@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from 'react';
+import { useSession } from 'next-auth/react';
 
 type User = {
   id: string;
@@ -19,6 +26,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (session?.user) {
+      setUser({
+        id: (session.user.id as string) || '',
+        name: session.user.name || '',
+        email: session.user.email || '',
+        role: (session.user.role as string) || 'user',
+      });
+    } else if (status === 'unauthenticated') {
+      setUser(null);
+    }
+  }, [session, status]);
 
   const value = {
     user,
