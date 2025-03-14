@@ -113,7 +113,7 @@ const MemberRegistrationModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl font-geist-sans h-[90dvh] overflow-y-auto bg-gradient-to-br from-white to-blue-50 border-none relative hide-scrollbar">
+      <DialogContent className="max-w-2xl font-geist-sans h-[90dvh] overflow-y-auto bg-gradient-to-br from-white to-blue-50 border-none hide-scrollbar">
         <div className="relative z-10 w-full">
           <DialogHeader className="mb-6">
             <div className="flex items-center gap-2">
