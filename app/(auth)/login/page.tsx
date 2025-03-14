@@ -52,10 +52,6 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="text-center text-sm text-muted-foreground">
-          By clicking continue, you agree to our Terms of Service and Privacy
-          Policy.
-        </CardFooter>
       </Card>
     </section>
   );

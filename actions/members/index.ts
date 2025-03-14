@@ -48,7 +48,7 @@ export async function createMember(member: Member) {
 export async function updateMember(member: Member) {
   try {
     const sessionUser = await getSessionUser();
-    console.log('Session user:', sessionUser);
+
     if (member.email !== sessionUser.email && !sessionUser.isAdmin) {
       const error = new EventOperationError(
         'You are not authorized to perform this action',
@@ -64,9 +64,15 @@ export async function updateMember(member: Member) {
       );
       return handleError(error);
     }
+    if (!member.email) {
+      return {
+        status: 'error',
+        message: 'Member Email ID is required for updates',
+      };
+    }
 
     const updatedMember = await prisma.member.update({
-      where: { id: member.id },
+      where: { email: member.email },
       data: member,
     });
     return handleSuccess({

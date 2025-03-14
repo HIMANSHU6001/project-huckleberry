@@ -1,6 +1,8 @@
 'use server';
 
 import { signIn } from '@/auth';
+import { prisma } from '@/lib/prisma';
+import { Member } from '@/types/admin/members';
 import { EventOperationError, handleError } from '@/utils';
 import { headers } from 'next/headers';
 
@@ -23,8 +25,14 @@ export async function login() {
 export async function isAdmin() {
   try {
     const baseUrl = await getBaseUrl();
-    const response = await fetch(`${baseUrl}/api/auth/session`);
+    const response = await fetch(`${baseUrl}/api/auth/session`, {
+      credentials: 'include',
+      headers: {
+        Cookie: (await headers()).get('cookie') || '',
+      },
+    });
     const session = await response.json();
+
     return session?.user?.isAdmin;
   } catch (error) {
     console.error(error);
@@ -35,9 +43,13 @@ export async function isAdmin() {
 export async function getSessionUser() {
   try {
     const baseUrl = await getBaseUrl();
-    const response = await fetch(`${baseUrl}/api/auth/session`);
+    const response = await fetch(`${baseUrl}/api/auth/session`, {
+      credentials: 'include',
+      headers: {
+        Cookie: (await headers()).get('cookie') || '',
+      },
+    });
     const session = await response.json();
-    console.log('Session:', `${baseUrl}/api/auth/session`, session);
     return session?.user;
   } catch (error) {
     console.error(error);
@@ -54,4 +66,33 @@ export async function requireAdmin() {
     return handleError(err);
   }
   return true;
+}
+
+// In your actions/members/index.ts file
+export async function updateMember(member: Member) {
+  try {
+    // Validate that ID exists before updating
+    if (!member.id) {
+      return {
+        status: 'error',
+        message: 'Member ID is required for updates',
+      };
+    }
+
+    const updatedMember = await prisma.member.update({
+      where: { id: member.id },
+      data: member,
+    });
+
+    return {
+      status: 'success',
+      data: updatedMember,
+    };
+  } catch (error) {
+    console.error('Error updating member:', error);
+    return {
+      status: 'error',
+      message: 'Failed to update member',
+    };
+  }
 }
