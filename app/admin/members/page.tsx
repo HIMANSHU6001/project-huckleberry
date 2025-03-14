@@ -33,8 +33,6 @@ const MembersDashboard = () => {
       const result = currentMember
         ? await updateMember(data as Member)
         : await createMember(data as Member);
-      console.log(result);
-
       if (result.status === 'success' && 'data' in result) {
         setMembers((prev) =>
           currentMember

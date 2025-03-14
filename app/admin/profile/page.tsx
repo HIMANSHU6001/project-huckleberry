@@ -151,8 +151,8 @@ export default function AdminProfilePage() {
   }
 
   return (
-    <div className="p-8 pb-20">
-      <div className="max-w-3xl bg-white rounded-xl shadow-sm p-8 border border-gray-100">
+    <div className="p-8 pb-20 ">
+      <div className=" bg-white rounded-xl shadow-sm p-8 border border-gray-100">
         <GoogleColorsBar />
 
         <Form {...form}>
