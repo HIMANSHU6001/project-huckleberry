@@ -9,7 +9,7 @@ export default function AdminFooter() {
         <div className="w-1/4 bg-gdg-yellow"></div>
         <div className="w-1/4 bg-gdg-green"></div>
       </div>
-      <p>
+      <p className="text-gdg-gray/70 font-geist-sans">
         © {new Date().getFullYear()} Google Developers Student Groups Rourkela
       </p>
     </footer>

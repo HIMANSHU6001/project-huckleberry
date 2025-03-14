@@ -9,6 +9,7 @@ import { Member } from '@/types/admin/members';
 import MemberTable from '@/components/admin/members/members-table/members-table';
 import { createMember, getAllMembers, updateMember } from '@/actions/members';
 import { useAuth } from '@/contexts/auth-context';
+import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 
 const MembersDashboard = () => {
   const [open, setOpen] = useState(false);
@@ -65,7 +66,7 @@ const MembersDashboard = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-5xl font-semibold my-4 font-geist-sans">Members</h1>
+      <AdminPageHeader accentTitle="Members" title="Members" />
 
       {user?.role === 'admin' && (
         <>

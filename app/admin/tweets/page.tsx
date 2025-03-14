@@ -1,17 +1,11 @@
 'use client';
 
 import { StatCard } from '@/components/admin/dashboard/stat-card';
-import {
-  Card,
-  CardTitle,
-  CardHeader,
-  CardDescription,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardTitle, CardHeader, CardContent } from '@/components/ui/card';
 import TweetCard from '@/components/admin/tweets/TweetCardComponent';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
-import { Twitter, AlertCircle, RefreshCw, Clock, Timer } from 'lucide-react';
+import { Twitter, RefreshCw, Clock } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -27,8 +21,8 @@ import {
   handleFetchAllDSCTweets,
 } from '@/handlers/tweets/tweetHandlers';
 import { Tweet } from '@/types/admin/tweets';
-import GoogleColorsBar from '@/components/shared/google-colors-bar';
 import Instructions from '@/components/admin/tweets/instructions';
+import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 
 export default function TweetsPage() {
   const [tweets, setTweets] = useState<number>(0);
@@ -102,10 +96,9 @@ export default function TweetsPage() {
 
   return (
     <div className="font-geist-sans min-h-screen bg-gradient-to-br from-white to-blue-50">
-      <div className="container mx-auto px-4 py-8 sm:px-6 animate-fade-in">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 tracking-tight text-gdg-dark">
-          Twitter Integration
-        </h1>
+      <div className="container mx-auto px-4 py-8 sm:px-6 ">
+        <AdminPageHeader accentTitle="Manage Tweets" title="Tweets" />
+
         <Instructions />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-12">
           <div className="lg:col-span-1">
@@ -169,8 +162,6 @@ export default function TweetsPage() {
             </Card>
           </div>
         </div>
-
-        <GoogleColorsBar />
 
         <div className="relative">
           <div className="absolute inset-x-0 -top-10 h-px bg-gradient-to-r from-transparent via-gdg-blue/20 to-transparent" />

@@ -44,7 +44,7 @@ const ProfilePhotoField: React.FC<ProfilePhotoFieldProps> = ({
       control={form.control}
       name="profile_photo"
       render={({ field }) => (
-        <FormItem className="flex flex-col items-center mb-4">
+        <FormItem className="flex flex-col items-center mb-4 font-geist-sans">
           <FormLabel className="text-center mb-2">Profile Photo*</FormLabel>
           <div className="flex flex-col items-center space-y-4">
             {imagePreview ? (

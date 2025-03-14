@@ -173,9 +173,7 @@ const MemberTable = ({
   });
 
   return (
-    <div className="mt-6">
-      <GoogleColorsBar />
-
+    <div className="mt-6 font-geist-sans">
       {members.length ? (
         <div className="rounded-xl border shadow-sm bg-white overflow-hidden">
           <Table>

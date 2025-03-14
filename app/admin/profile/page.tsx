@@ -21,6 +21,7 @@ import {
   PersonalInfoSection,
 } from '@/components/admin/members/member-form';
 import GoogleColorsBar from '@/components/shared/google-colors-bar';
+import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 
 type ProfileFormSchema = z.infer<typeof memberSchema>;
 
@@ -151,56 +152,60 @@ export default function AdminProfilePage() {
   }
 
   return (
-    <div className="p-8 pb-20 ">
-      <div className=" bg-white rounded-xl shadow-sm p-8 border border-gray-100">
-        <GoogleColorsBar />
-
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-8 mt-6"
-          >
-            <ProfilePhotoField
-              form={form}
-              imageFile={imageFile}
-              setImageFile={setImageFile}
-              imagePreview={imagePreview}
-              setImagePreview={setImagePreview}
-              isEditing={true}
-              defaultValues={profile || undefined}
-            />
-
-            <MemberInfoSection form={form} />
-
-            <SocialLinksSection form={form} />
-
-            <PersonalInfoSection form={form} />
-
-            <div className="pt-4 flex justify-end space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => form.reset()}
-                className="rounded-full border-gray-300 hover:bg-gray-100 hover:text-gray-800"
-                disabled={loading || uploadLoading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading || uploadLoading}
-                className="rounded-full bg-gdg-blue hover:bg-gdg-blue/90 text-white shadow-md hover:shadow-lg"
-              >
-                {uploadLoading
-                  ? 'Uploading...'
-                  : loading
-                    ? 'Saving...'
-                    : 'Save Changes'}
-              </Button>
-            </div>
-          </form>
-        </Form>
+    <>
+      {' '}
+      <div className="p-6 container mx-auto">
+        <AdminPageHeader title="Profile" accentTitle="Profile" />
       </div>
-    </div>
+      <div className="p-8 pb-20 font-geist-sans">
+        <div className=" bg-white rounded-xl shadow-sm p-8 border border-gray-100">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-8 mt-6"
+            >
+              <ProfilePhotoField
+                form={form}
+                imageFile={imageFile}
+                setImageFile={setImageFile}
+                imagePreview={imagePreview}
+                setImagePreview={setImagePreview}
+                isEditing={true}
+                defaultValues={profile || undefined}
+              />
+
+              <MemberInfoSection form={form} />
+
+              <SocialLinksSection form={form} />
+
+              <PersonalInfoSection form={form} />
+
+              <div className="pt-4 flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => form.reset()}
+                  className="rounded-full border-gray-300 hover:bg-gray-100 hover:text-gray-800"
+                  disabled={loading || uploadLoading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading || uploadLoading}
+                  className="rounded-full bg-gdg-blue hover:bg-gdg-blue/90 text-white shadow-md hover:shadow-lg"
+                >
+                  {uploadLoading
+                    ? 'Uploading...'
+                    : loading
+                      ? 'Saving...'
+                      : 'Save Changes'}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
+      </div>
+    </>
   );
 }

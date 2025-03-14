@@ -23,6 +23,7 @@ import {
 } from '@/actions/events';
 import { ApiResponse } from '@/types/commons';
 import { useAuth } from '@/contexts/auth-context';
+import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 
 const EventsDashboard = () => {
   const [open, setOpen] = useState(false);
@@ -105,8 +106,8 @@ const EventsDashboard = () => {
 
   return (
     <div className="p-8 font-geist-sans">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Events Dashboard</h1>
+      <AdminPageHeader accentTitle="Events" title="Events" />
+      <div className="flex justify-end items-center mb-6">
         {user?.role === 'admin' && (
           <Button
             className="flex items-center gap-2"

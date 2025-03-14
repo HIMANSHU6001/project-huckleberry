@@ -1,5 +1,5 @@
-import AdminFooter from '@/components/admin/navigation/admin-footer';
-import Sidebar from '@/components/admin/navigation/admin-sidebar';
+import AdminFooter from '@/components/admin/layout/admin-footer';
+import Sidebar from '@/components/admin/layout/admin-sidebar';
 import BackgroundElements from '@/components/shared/background-elements';
 import { AuthProvider } from '@/contexts/auth-context';
 import React from 'react';

@@ -74,7 +74,7 @@ export default function Sidebar({ className }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const { user } = useAuth();
-  console.log(user);
+
   return (
     <>
       <Button
@@ -103,27 +103,23 @@ export default function Sidebar({ className }: SidebarProps) {
       >
         <div className="flex flex-col h-full">
           <div className="h-16 flex items-center px-4 border-b">
-            {!collapsed && (
-              <div className="flex items-center space-x-2">
-                {!collapsed && (
-                  <div className="flex items-center space-x-2">
-                    <div className="relative w-8 h-8 rounded-full overflow-hidden">
-                      <Image
-                        src="/gdg.jpg"
-                        alt={user?.name || 'GDSC logo'}
-                        fill
-                        className="object-cover"
-                        sizes="32px"
-                        priority
-                      />
-                    </div>
-                    <span className="font-semibold text-lg font-geist-sans">
-                      {user?.name}
-                    </span>
-                  </div>
-                )}
+            <div className="flex items-center space-x-2">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                <Image
+                  src="/gdg.jpg"
+                  alt={user?.name || 'GDSC logo'}
+                  fill
+                  className="object-cover"
+                  sizes="32px"
+                  priority
+                />
               </div>
-            )}
+              {!collapsed && (
+                <span className="font-semibold text-lg font-geist-sans">
+                  {user?.name}
+                </span>
+              )}
+            </div>
           </div>
 
           <div className={cn('p-1', collapsed ? '' : 'px-3')}>

@@ -4,8 +4,8 @@ import { TableRepo } from '@/types/projects';
 import { useEffect, useState } from 'react';
 import { fetchRepos, getPublishedRepos } from '@/actions/projects';
 import ReposPage from '@/components/admin/projects/repositary-table';
-import GoogleColorsBar from '@/components/shared/google-colors-bar';
 import { Loader2 } from 'lucide-react';
+import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 
 export default function ProjectsPage() {
   const [repos, setRepos] = useState<TableRepo[]>([]);
@@ -19,8 +19,13 @@ export default function ProjectsPage() {
       try {
         const data = await fetchRepos(orgName, false);
         const result = await getPublishedRepos();
-        const published = result && 'data' in result ? result.data.data : [];
-        setPublishedRepos(published.map((repo) => repo.repo_id));
+        const published: { repo_id: string }[] =
+          result && 'data' in result
+            ? (result.data.data as { repo_id: string }[])
+            : [];
+        setPublishedRepos(
+          (published as { repo_id: string }[]).map((repo) => repo.repo_id)
+        );
 
         const allRepos = data.map((repo) => ({
           id: String(repo.id),
@@ -49,13 +54,7 @@ export default function ProjectsPage() {
     <div className="min-h-screen w-full overflow-hidden relative">
       <div className=" mx-auto p-6 relative z-10 animate-fade-in-delay-1">
         <div className=" mx-auto">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold font-geist-mono tracking-tight">
-              <span className="text-gdg-dark">Publish </span>
-              <span className="">Projects</span>
-            </h1>
-          </div>
-          <GoogleColorsBar />
+          <AdminPageHeader accentTitle="Publish Projects" title="Projects" />
 
           {isLoading && (
             <div className="text-center py-16 animate-pulse">
