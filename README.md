@@ -4,14 +4,6 @@
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
 
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-
 <br />
 <p align="center">
   <a href="https://github.com/dscnitrourkela/project-raisin">

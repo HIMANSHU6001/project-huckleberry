@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!memberResponse?.id) {
-          return `/login`;
+          return `/login?errorCode=member_not_found`;
         }
 
         return true;
