@@ -26,7 +26,7 @@ export const RecentProjectsList = ({
   isLoading?: boolean;
 }) => (
   <DashboardListCard
-    title="Recent Projects"
+    title="Published Projects"
     color="gdg-green"
     isLoading={isLoading}
     emptyMessage="No published projects"

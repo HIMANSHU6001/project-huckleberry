@@ -177,7 +177,6 @@ export default function TweetsPage() {
           <h2 className="text-2xl sm:text-3xl font-medium text-center my-10 tracking-tight text-gdg-dark">
             GDSC Twitter Feed
           </h2>
-          <div className="absolute inset-x-0 -bottom-10 h-px bg-gradient-to-r from-transparent via-gdg-blue/20 to-transparent" />
         </div>
 
         {fetchedTweets.length === 0 ? (
@@ -193,7 +192,7 @@ export default function TweetsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="px-1 sm:px-4 mb-12">
+          <div className="px-1 sm:px-4 mb-12 max-w-[70rem] mx-auto">
             <Carousel className="w-full">
               <CarouselContent>
                 {fetchedTweets.map((tweet) => (

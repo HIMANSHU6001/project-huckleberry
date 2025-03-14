@@ -63,10 +63,10 @@ export default function ProjectsPage() {
       </div>
 
       <div className=" mx-auto p-6 relative z-10 animate-fade-in-delay-1">
-        <div className="max-w-4xl mx-auto">
+        <div className=" mx-auto">
           <div className="mb-8">
             <h1 className="text-4xl font-bold font-geist-mono tracking-tight">
-              <span className="text-gdg-dark">Our </span>
+              <span className="text-gdg-dark">Publish </span>
               <span className="">Projects</span>
             </h1>
           </div>
