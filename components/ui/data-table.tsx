@@ -18,6 +18,7 @@ export const DataTable = <T extends { id: string }>({
   data,
   onEdit,
   onDelete,
+  isAdmin,
 }: DataTableProps<T>): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({
@@ -74,7 +75,7 @@ export const DataTable = <T extends { id: string }>({
                 {column.label}
               </TableHead>
             ))}
-            <TableHead>Actions</TableHead>
+            {isAdmin && <TableHead>Actions</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -87,22 +88,24 @@ export const DataTable = <T extends { id: string }>({
                     : row[column.key]?.toString()}
                 </TableCell>
               ))}
-              <TableCell className="flex items-center gap-2">
-                <Button
-                  variant={'outline'}
-                  size={'icon'}
-                  onClick={() => onEdit(row)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={'outline'}
-                  size={'icon'}
-                  onClick={() => onDelete(row)}
-                >
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
-              </TableCell>
+              {isAdmin && (
+                <TableCell className="flex items-center gap-2">
+                  <Button
+                    variant={'outline'}
+                    size={'icon'}
+                    onClick={() => onEdit(row)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={'outline'}
+                    size={'icon'}
+                    onClick={() => onDelete(row)}
+                  >
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

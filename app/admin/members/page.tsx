@@ -8,12 +8,14 @@ import MemberRegistrationModal from '../../../components/admin/members/members-t
 import { Member } from '@/types/admin/members';
 import MemberTable from '@/components/admin/members/members-table/members-table';
 import { createMember, getAllMembers, updateMember } from '@/actions/members';
+import { useAuth } from '@/contexts/auth-context';
 
 const MembersDashboard = () => {
   const [open, setOpen] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const [currentMember, setCurrentMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -33,7 +35,6 @@ const MembersDashboard = () => {
       const result = currentMember
         ? await updateMember(data as Member)
         : await createMember(data as Member);
-      console.log(result);
       if (result.status === 'success' && 'data' in result) {
         setMembers((prev) =>
           currentMember
@@ -66,19 +67,22 @@ const MembersDashboard = () => {
     <div className="p-8">
       <h1 className="text-5xl font-semibold my-4 font-geist-sans">Members</h1>
 
-      <MemberRegistrationModal
-        key={currentMember ? currentMember.id : 'new-member'}
-        open={open}
-        onOpenChange={() => setOpen(false)}
-        onSubmit={handleSubmit}
-        defaultValues={currentMember}
-        isEditing={Boolean(currentMember)}
-        isLoading={loading}
-      />
-
-      <Button onClick={() => setOpen(true)} className="font-geist-sans">
-        <Plus className="mr-2" /> Add Member
-      </Button>
+      {user?.role === 'admin' && (
+        <>
+          <MemberRegistrationModal
+            key={currentMember ? currentMember.id : 'new-member'}
+            open={open}
+            onOpenChange={() => setOpen(false)}
+            onSubmit={handleSubmit}
+            defaultValues={currentMember}
+            isEditing={Boolean(currentMember)}
+            isLoading={loading}
+          />
+          <Button onClick={() => setOpen(true)} className="font-geist-sans">
+            <Plus className="mr-2" /> Add Member
+          </Button>
+        </>
+      )}
 
       <MemberTable
         members={members}
@@ -86,6 +90,7 @@ const MembersDashboard = () => {
         setCurrentMember={setCurrentMember}
         setOpen={setOpen}
         setLoading={setLoading}
+        isAdmin={user?.role === 'admin'}
       />
     </div>
   );

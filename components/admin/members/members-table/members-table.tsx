@@ -31,12 +31,14 @@ const MemberTable = ({
   setCurrentMember,
   setOpen,
   setLoading,
+  isAdmin,
 }: {
   members: Member[];
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
   setCurrentMember: React.Dispatch<React.SetStateAction<Member | null>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isAdmin: boolean;
 }) => {
   const handleEdit = (member: Member) => {
     setCurrentMember(member);
@@ -147,17 +149,21 @@ const MemberTable = ({
         </div>
       ),
     },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => (
-        <MemberActions
-          member={row.original}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      ),
-    },
+    ...(isAdmin
+      ? [
+          {
+            id: 'actions',
+            header: 'Actions',
+            cell: ({ row }) => (
+              <MemberActions
+                member={row.original}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   const table = useReactTable({

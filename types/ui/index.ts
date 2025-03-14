@@ -1,7 +1,7 @@
 export type DataTableColumn<T> = {
   key: keyof T;
   label: string;
-   
+
   format?: (value: any) => string | number | React.ReactNode;
 };
 
@@ -10,6 +10,7 @@ export interface DataTableProps<T extends { id: string }> {
   data: T[];
   onEdit: (record: T) => void;
   onDelete: (record: T) => void;
+  isAdmin: boolean;
 }
 
 export type SortConfig = {
