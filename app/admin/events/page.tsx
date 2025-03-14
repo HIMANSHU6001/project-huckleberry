@@ -71,6 +71,7 @@ const EventsDashboard = () => {
         ? await updateEvent(currentEvent.id, eventData)
         : await createEvent(eventData);
 
+      console.log(result);
       if (result.status === 'success') {
         setEvents((prevEvents) =>
           upsertEvent(prevEvents, data, currentEvent?.id)

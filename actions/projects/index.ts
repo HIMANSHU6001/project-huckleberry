@@ -5,6 +5,7 @@ import { ApiResponse } from '@/types/commons';
 import { GitHubRepo, GitHubContributor } from '@/types/projects';
 import { handleError, handleSuccess } from '@/utils';
 import { revalidatePath } from 'next/cache';
+import { isAdmin } from '../auth';
 
 const GITHUB_API_URL = 'https://api.github.com';
 const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
@@ -95,6 +96,10 @@ export async function publishRepos(
   repos: { id: string; name: string }[]
 ): Promise<ApiResponse> {
   try {
+    if (!(await isAdmin()))
+      return handleError({
+        message: 'You are not authorized to perform this action',
+      });
     await prisma.project.createMany({
       data: repos.map((repo) => ({
         repo_id: repo.id,
@@ -137,6 +142,10 @@ export async function getPublishedRepos() {
 
 export async function unpublishRepos(repoIds: string[]): Promise<ApiResponse> {
   try {
+    if (!(await isAdmin()))
+      return handleError({
+        message: 'You are not authorized to perform this action',
+      });
     await prisma.project.deleteMany({
       where: {
         repo_id: {
