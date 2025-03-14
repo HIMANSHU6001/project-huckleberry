@@ -1,7 +1,7 @@
 'use client';
 
 import { GitHubRepo } from '@/types/projects';
-import { ProjectCard } from '@/components/admin/projects/ProjectCard';
+import { ProjectCard } from '@/components/admin/projects/project-card';
 import { useEffect, useState } from 'react';
 import { fetchRepos, getPublishedRepos } from '@/actions/projects';
 

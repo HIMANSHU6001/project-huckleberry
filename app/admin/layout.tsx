@@ -1,4 +1,5 @@
-import AdminFooter from '@/components/shared/admin-footer';
+import AdminFooter from '@/components/admin/navigation/admin-footer';
+import Sidebar from '@/components/admin/navigation/admin-sidebar';
 import BackgroundElements from '@/components/shared/background-elements';
 import React from 'react';
 
@@ -8,12 +9,11 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <BackgroundElements />
-      <main className="min-h-[85dvh] bg-gradient-to-br from-white to-blue-50">
+    <div className="flex min-h-screen bg-background">
+      <Sidebar />
+      <main className="flex-1 ml-0 md:ml-[250px] transition-all">
         {children}
       </main>
-      <AdminFooter />
-    </>
+    </div>
   );
 }

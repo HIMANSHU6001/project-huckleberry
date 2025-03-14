@@ -1,6 +1,6 @@
 'use client';
 
-import { StatCard } from '@/components/admin/dashboard/StatCard';
+import { StatCard } from '@/components/admin/dashboard/stat-card';
 import {
   Card,
   CardTitle,

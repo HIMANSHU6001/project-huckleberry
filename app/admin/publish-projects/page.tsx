@@ -3,7 +3,7 @@
 import { TableRepo } from '@/types/projects';
 import { useEffect, useState } from 'react';
 import { fetchRepos, getPublishedRepos } from '@/actions/projects';
-import ReposPage from '@/components/admin/projects/RepositaryTable';
+import ReposPage from '@/components/admin/projects/repositary-table';
 import GoogleColorsBar from '@/components/shared/google-colors-bar';
 import { Loader2 } from 'lucide-react';
 

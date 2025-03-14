@@ -1,16 +1,16 @@
 'use client';
 
 import { Calendar, Layers, Users, Twitter } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState, useEffect } from 'react';
 import { getAllEvents } from '@/actions/events';
 import { getAllMembers } from '@/actions/members';
 import { getPublishedRepos } from '@/actions/projects';
 import { getTotalTweetCount } from '@/actions/tweets';
-import { StatCard } from '@/components/admin/dashboard/StatCard';
-import { RecentProjectsList } from '@/components/admin/dashboard/RecentPorjectList';
-import { UpcomingEventsList } from '@/components/admin/dashboard/UpcomingEventList';
-import { ErrorDisplay } from '@/components/admin/dashboard/ErrorComponent';
+import { StatCard } from '@/components/admin/dashboard/stat-card';
+import { RecentProjectsList } from '@/components/admin/dashboard/recent-project-list';
+import { UpcomingEventsList } from '@/components/admin/dashboard/upcoming-event-list';
+import { ErrorDisplay } from '@/components/admin/dashboard/error-component';
+import GoogleColorsBar from '@/components/shared/google-colors-bar';
 import {
   filterUpcomingEvents,
   mapUpcomingEvents,
@@ -107,63 +107,63 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-8 animate-fade-in">
       <div className="mx-auto max-w-7xl">
-        <h1 className="text-4xl font-gist mb-8">Dashboard</h1>
+        <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
+        <p className="text-muted-foreground mb-8">
+          Welcome to GDSC NITR admin dashboard
+        </p>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 font-geist-sans">
+        <GoogleColorsBar />
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 font-geist-sans mb-8">
           <StatCard
             title="Published Projects"
             value={stats.recentProjects.length}
             icon={Layers}
             link="/admin/publish-projects"
-            linkText="Go to all projects →"
+            linkText="Manage Projects"
             isLoading={isLoading}
+            color="gdg-green"
           />
           <StatCard
             title="Team Members"
             value={stats.totalMembers}
             icon={Users}
             link="/admin/members"
-            linkText="View all members →"
+            linkText="View all members"
             isLoading={isLoading}
+            color="gdg-blue"
           />
           <StatCard
             title="Upcoming Events"
             value={stats.upcomingEvents}
             icon={Calendar}
             link="/admin/events"
-            linkText="View calendar →"
+            linkText="View calendar"
             isLoading={isLoading}
+            color="gdg-yellow"
           />
           <StatCard
             title="Tweets"
             value={stats.tweetCount}
             icon={Twitter}
             link="/admin/tweets"
-            linkText="View all Tweets →"
+            linkText="View all Tweets"
             isLoading={isLoading}
+            color="gdg-red"
           />
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 font-geist-sans">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-gist">Recent Projects</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RecentProjectsList projects={stats.recentProjects} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-gist">Upcoming Events</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <UpcomingEventsList events={stats.upcomingEventsList} />
-            </CardContent>
-          </Card>
+          <RecentProjectsList
+            projects={stats.recentProjects}
+            isLoading={isLoading}
+          />
+          <UpcomingEventsList
+            events={stats.upcomingEventsList}
+            isLoading={isLoading}
+          />
         </div>
       </div>
     </div>
