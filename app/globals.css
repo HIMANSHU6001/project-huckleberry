@@ -79,3 +79,13 @@ body {
     @apply bg-gradient-to-r from-gdg-blue to-gdg-green hover:from-gdg-green hover:to-gdg-blue transition-all duration-500;
   }
 }
+
+/* Add this to your existing globals.css file */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}

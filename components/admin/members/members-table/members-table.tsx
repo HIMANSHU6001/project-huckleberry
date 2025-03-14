@@ -1,6 +1,5 @@
 import { deleteMember } from '@/actions/members';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -16,9 +15,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Github, Linkedin, Pencil, Trash2, Twitter } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
+
+import MemberAvatar from './member-avatar';
+import RoleBadge from './role-badge';
+import SocialLinks from './social-links';
+import MemberActions from './member-actions';
+import EmptyState from './empty-state';
+import { GoogleColorsBar } from '../member-form';
 
 const MemberTable = ({
   members,
@@ -33,122 +38,6 @@ const MemberTable = ({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const columns: ColumnDef<Member>[] = [
-    {
-      accessorKey: 'profile_photo',
-      header: 'Profile',
-      cell: ({ row }) => (
-        <div className="relative w-10 h-10">
-          {/* eslint-disable-next-line */}
-          <img
-            src={row.original.profile_photo}
-            alt={row.original.user_name}
-            className="rounded-full object-cover"
-          />
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'user_name',
-      header: 'Username',
-    },
-    {
-      accessorKey: 'email',
-      header: 'Email',
-    },
-    {
-      accessorKey: 'mobile_no',
-      header: 'Mobile',
-    },
-    {
-      accessorKey: 'role',
-      header: 'Role',
-      cell: ({ row }) => <Badge variant="secondary">{row.original.role}</Badge>,
-    },
-    {
-      accessorKey: 'socials',
-      header: 'Socials',
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          {row.original.github && (
-            <a
-              href={row.original.github}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-          )}
-          {row.original.linkedin && (
-            <a
-              href={row.original.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-          )}
-          {row.original.twitter && (
-            <a
-              href={row.original.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Twitter className="w-5 h-5" />
-            </a>
-          )}
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'permissions',
-      header: 'Permissions',
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          {row.original.is_admin && <Badge variant="secondary">Admin</Badge>}
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'created_at',
-      header: 'Created At',
-      cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString(),
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => {
-        const member = row.original;
-        return (
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => handleEdit(member)}
-              className="h-8 w-8 p-0"
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => handleDelete(member.id)}
-              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        );
-      },
-    },
-  ];
-
-  const table = useReactTable({
-    data: members,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
   const handleEdit = (member: Member) => {
     setCurrentMember(member);
     setOpen(true);
@@ -179,16 +68,122 @@ const MemberTable = ({
     }
   };
 
+  const columns: ColumnDef<Member>[] = [
+    {
+      accessorKey: 'profile_photo',
+      header: 'Profile',
+      cell: ({ row }) => (
+        <MemberAvatar
+          src={row.original.profile_photo}
+          alt={row.original.user_name}
+        />
+      ),
+    },
+    {
+      accessorKey: 'user_name',
+      header: 'Username',
+      cell: ({ row }) => (
+        <div className="font-medium text-gdg-dark">
+          {row.original.user_name}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'email',
+      header: 'Email',
+      cell: ({ row }) => (
+        <div className="text-gdg-gray">{row.original.email}</div>
+      ),
+    },
+    {
+      accessorKey: 'mobile_no',
+      header: 'Mobile',
+      cell: ({ row }) => (
+        <div className="text-gdg-gray">{row.original.mobile_no}</div>
+      ),
+    },
+    {
+      accessorKey: 'role',
+      header: 'Role',
+      cell: ({ row }) => <RoleBadge role={row.original.role} />,
+    },
+    {
+      accessorKey: 'socials',
+      header: 'Socials',
+      cell: ({ row }) => (
+        <SocialLinks
+          github={row.original.github}
+          linkedin={row.original.linkedin}
+          twitter={row.original.twitter}
+        />
+      ),
+    },
+    {
+      accessorKey: 'permissions',
+      header: 'Permissions',
+      cell: ({ row }) => (
+        <div className="flex gap-2">
+          {row.original.is_admin && (
+            <Badge
+              variant="outline"
+              className="bg-gdg-blue/10 text-gdg-blue border-gdg-blue/20 rounded-full px-3 py-0.5"
+            >
+              Admin
+            </Badge>
+          )}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'created_at',
+      header: 'Created At',
+      cell: ({ row }) => (
+        <div className="text-gdg-gray/80">
+          {new Date(row.original.created_at).toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
+        </div>
+      ),
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <MemberActions
+          member={row.original}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      ),
+    },
+  ];
+
+  const table = useReactTable({
+    data: members,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <div className="mt-6">
+      <GoogleColorsBar />
+
       {members.length ? (
-        <div className="rounded-md border">
+        <div className="rounded-xl border shadow-sm bg-white overflow-hidden">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-gray-50">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow
+                  key={headerGroup.id}
+                  className="border-b border-gray-200"
+                >
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className="text-gdg-dark font-medium py-4"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -206,9 +201,10 @@ const MemberTable = ({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
+                    className="transition-colors hover:bg-gray-50 border-b border-gray-100"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} className="py-3">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -221,7 +217,7 @@ const MemberTable = ({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className="h-24 text-center text-gdg-gray"
                   >
                     No members found.
                   </TableCell>
@@ -231,7 +227,7 @@ const MemberTable = ({
           </Table>
         </div>
       ) : (
-        <p>No members found.</p>
+        <EmptyState />
       )}
     </div>
   );

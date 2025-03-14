@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import MemberRegistrationModal from '../../../components/admin/members/create-member';
+import MemberRegistrationModal from '../../../components/admin/members/members-table/create-member';
 import { Member } from '@/types/admin/members';
-import MemberTable from '@/components/admin/members/members-table';
+import MemberTable from '@/components/admin/members/members-table/members-table';
 import { createMember, getAllMembers, updateMember } from '@/actions/members';
 
 const MembersDashboard = () => {
@@ -61,11 +61,14 @@ const MembersDashboard = () => {
     }
   };
 
+  useEffect(() => {});
+
   return (
     <div className="p-8">
       <h1 className="text-5xl font-semibold my-4 font-geist-sans">Members</h1>
 
       <MemberRegistrationModal
+        key={currentMember ? currentMember.id : 'new-member'}
         open={open}
         onOpenChange={() => setOpen(false)}
         onSubmit={handleSubmit}
@@ -74,7 +77,7 @@ const MembersDashboard = () => {
         isLoading={loading}
       />
 
-      <Button onClick={() => setOpen(true)}>
+      <Button onClick={() => setOpen(true)} className="font-geist-sans">
         <Plus className="mr-2" /> Add Member
       </Button>
 
