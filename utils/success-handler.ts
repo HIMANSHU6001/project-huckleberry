@@ -1,8 +1,7 @@
 export const handleSuccess = <
   T extends {
-    events: any;
-    data: unknown;
-    profile_photo: string;
+    events?: any;
+    data?: unknown;
     message: string | null;
   },
 >(
