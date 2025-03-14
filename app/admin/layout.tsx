@@ -1,3 +1,4 @@
+import AdminFooter from '@/components/shared/admin-footer';
 import BackgroundElements from '@/components/shared/background-elements';
 import React from 'react';
 
@@ -10,6 +11,7 @@ export default function AdminLayout({
     <>
       <BackgroundElements />
       {children}
+      <AdminFooter />
     </>
   );
 }

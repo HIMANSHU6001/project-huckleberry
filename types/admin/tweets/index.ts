@@ -1,4 +1,6 @@
 export interface Tweet {
+  username: string;
+  profileImageUrl: any;
   id: string;
   text: string;
   created_at: string;

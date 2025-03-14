@@ -6,11 +6,12 @@ import {
   CardTitle,
   CardHeader,
   CardDescription,
+  CardContent,
 } from '@/components/ui/card';
 import TweetCard from '@/components/admin/tweets/TweetCardComponent';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
-import { Twitter } from 'lucide-react';
+import { Twitter, AlertCircle, RefreshCw, Clock, Timer } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -26,6 +27,8 @@ import {
   handleFetchAllDSCTweets,
 } from '@/handlers/tweets/tweetHandlers';
 import { Tweet } from '@/types/admin/tweets';
+import GoogleColorsBar from '@/components/shared/google-colors-bar';
+import Instructions from '@/components/admin/tweets/instructions';
 
 export default function TweetsPage() {
   const [tweets, setTweets] = useState<number>(0);
@@ -98,124 +101,120 @@ export default function TweetsPage() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-6 sm:px-6">
-      {/* Rest of your component remains the same */}
-      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-8 tracking-wide">
-        Our Tweets
-      </h1>
-      <Card className="border-white mb-6">
-        {/* Card content remains the same */}
-        <CardHeader className="sm:px-6">
-          <CardTitle className="text-xl sm:text-2xl tracking-wide mb-1">
-            Important
-          </CardTitle>
-          <CardDescription>
-            <ul className="list-disc list-inside space-y-1 sm:space-y-2 sm:text-lg tracking-wide">
-              <li>
-                We can pull <b className="text-cyan-300">100 posts per month</b>
-                .
-              </li>
-              <li>
-                We can make{' '}
-                <b className="text-cyan-300">1 request / 15 minutes</b>.
-              </li>
-              <li>
-                For rate limiting purposes, a{' '}
-                <b className="text-cyan-300">2 hour cooldown</b> is enforced
-                between fetches.
-              </li>
-              <li>
-                Use <b className="text-cyan-300">Fetch All Tweets</b> when the
-                project is deployed and used by the public. This will{' '}
-                <b className="text-cyan-300">fetch 20 latest tweets</b>.{' '}
-                <b className="text-red-400 text-xl">
-                  ( Do not use frequently )
-                </b>
-                .
-              </li>
-              <li>
-                Use <b className="text-cyan-300">Fetch Latest Tweet</b> when you
-                want to fetch the latest tweet.
-              </li>
-            </ul>
-          </CardDescription>
-        </CardHeader>
-      </Card>
+    <div className="font-geist-sans min-h-screen bg-gradient-to-br from-white to-blue-50">
+      <div className="container mx-auto px-4 py-8 sm:px-6 animate-fade-in">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 tracking-tight text-gdg-dark">
+          Twitter Integration
+        </h1>
+        <Instructions />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-12">
+          <div className="lg:col-span-1">
+            <StatCard
+              title="Total DSC Tweets"
+              value={tweets}
+              icon={Twitter}
+              isLoading={isLoading}
+            />
+          </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-12 sm:mb-16 md:mb-20 items-center">
-        <StatCard
-          title="Total DSC Tweets Fetched"
-          value={tweets}
-          icon={Twitter}
-          isLoading={isLoading}
-        />
-        <StatCard
-          title="Last Fetched On"
-          value={lastFetchedDate}
-          icon={Twitter}
-          isLoading={isLoading}
-        />
+          <div className="lg:col-span-2">
+            <StatCard
+              title="Last Fetched"
+              value={lastFetchedDate}
+              icon={Clock}
+              isLoading={isLoading}
+            />
+          </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-end">
-          <Button
-            onClick={() =>
-              handleFetchLatestTweet(
-                lastFetchedTimestamp,
-                setIsLoading,
-                handleFetchSuccess
-              )
-            }
-            disabled={isLoading}
-            className="w-full text-sm lg:text-base hover:bg-green-400 transition-all duration-300"
-          >
-            {isLoading ? 'Fetching...' : 'Fetch Latest Tweet'}
-          </Button>
-          <Button
-            onClick={() =>
-              handleFetchAllDSCTweets(
-                lastFetchedTimestamp,
-                setIsLoading,
-                handleFetchSuccess
-              )
-            }
-            disabled={isLoading}
-            className="w-full text-sm lg:text-base hover:bg-red-400 transition-all duration-300 mt-2 sm:mt-0"
-          >
-            {isLoading ? 'Fetching...' : 'Fetch All Tweets'}
-          </Button>
-        </div>
-      </div>
-
-      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-8 tracking-wide">
-        Fetched DSC Tweets
-      </h1>
-
-      {fetchedTweets.length === 0 ? (
-        <h2 className="text-center text-lg sm:text-xl tracking-wide mt-8 text-red-400">
-          No tweets fetched till now.
-        </h2>
-      ) : (
-        <div className="px-1 sm:px-4">
-          <Carousel className="w-full">
-            <CarouselContent>
-              {fetchedTweets.map((tweet) => (
-                <CarouselItem
-                  key={tweet.id}
-                  className="pl-4 md:basis-1/2 lg:basis-1/3"
+          <div className="lg:col-span-1">
+            <Card className="bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200 h-full">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-gdg-gray">
+                  Actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-2">
+                <Button
+                  onClick={() =>
+                    handleFetchLatestTweet(
+                      lastFetchedTimestamp,
+                      setIsLoading,
+                      handleFetchSuccess
+                    )
+                  }
+                  disabled={isLoading}
+                  className="w-full text-sm bg-gdg-blue hover:bg-gdg-blue/90 text-white transition-all duration-300 flex items-center gap-2"
                 >
-                  <div className="p-1">
-                    <TweetCard tweet={tweet} />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex justify-center mt-4 gap-2">
-              <CarouselPrevious className="relative sm:absolute" />
-              <CarouselNext className="relative sm:absolute" />
-            </div>
-          </Carousel>
+                  <RefreshCw
+                    className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+                  />
+                  {isLoading ? 'Fetching...' : 'Fetch Latest Tweet'}
+                </Button>
+                <Button
+                  onClick={() =>
+                    handleFetchAllDSCTweets(
+                      lastFetchedTimestamp,
+                      setIsLoading,
+                      handleFetchSuccess
+                    )
+                  }
+                  disabled={isLoading}
+                  variant="outline"
+                  className="w-full text-sm border-gdg-red text-gdg-red hover:bg-gdg-red/10 transition-all duration-300 flex items-center gap-2"
+                >
+                  <Twitter className="h-4 w-4" />
+                  {isLoading ? 'Fetching...' : 'Fetch All Tweets'}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      )}
+
+        <GoogleColorsBar />
+
+        <div className="relative">
+          <div className="absolute inset-x-0 -top-10 h-px bg-gradient-to-r from-transparent via-gdg-blue/20 to-transparent" />
+          <h2 className="text-2xl sm:text-3xl font-medium text-center my-10 tracking-tight text-gdg-dark">
+            GDSC Twitter Feed
+          </h2>
+          <div className="absolute inset-x-0 -bottom-10 h-px bg-gradient-to-r from-transparent via-gdg-blue/20 to-transparent" />
+        </div>
+
+        {fetchedTweets.length === 0 ? (
+          <Card className="my-12 py-12 bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm">
+            <CardContent className="flex flex-col items-center justify-center text-center">
+              <Twitter className="h-12 w-12 text-gdg-blue/30 mb-4" />
+              <h3 className="text-xl font-medium text-gdg-gray mb-2">
+                No tweets fetched yet
+              </h3>
+              <p className="text-gdg-gray/70">
+                Use the fetch buttons above to retrieve tweets from Twitter
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="px-1 sm:px-4 mb-12">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {fetchedTweets.map((tweet) => (
+                  <CarouselItem
+                    key={tweet.id}
+                    className="pl-4 md:basis-1/2 lg:basis-1/3"
+                  >
+                    <div className="p-1 h-full transform transition-all duration-300 hover:scale-[1.02]">
+                      <TweetCard tweet={tweet} />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center mt-6 gap-4">
+                <CarouselPrevious className="relative sm:absolute bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm hover:bg-gdg-blue hover:text-white transition-all duration-300" />
+                <CarouselNext className="relative sm:absolute bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm hover:bg-gdg-blue hover:text-white transition-all duration-300" />
+              </div>
+            </Carousel>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
