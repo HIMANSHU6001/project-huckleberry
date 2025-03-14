@@ -13,7 +13,6 @@ export interface Member {
   caption: string | null;
   introduction: string;
   is_admin: boolean;
-  is_super_admin: boolean;
 }
 
 export interface MemberRegistrationModalProps {
@@ -44,7 +43,6 @@ export interface Database {
           caption: string | null;
           introduction: string;
           is_admin: boolean;
-          is_super_admin: boolean;
         };
         Insert: {
           id?: string;
@@ -61,7 +59,6 @@ export interface Database {
           caption?: string | null;
           introduction: string;
           is_admin?: boolean;
-          is_super_admin?: boolean;
         };
         Update: {
           id?: string;
@@ -78,7 +75,6 @@ export interface Database {
           caption?: string | null;
           introduction?: string;
           is_admin?: boolean;
-          is_super_admin?: boolean;
         };
       };
     };
@@ -109,7 +105,6 @@ export interface Member {
   caption: string | null;
   introduction: string;
   is_admin: boolean;
-  is_super_admin: boolean;
 }
 
 export type MemberFormData = Omit<Member, 'id' | 'created_at'> & {

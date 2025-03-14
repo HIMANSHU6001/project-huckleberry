@@ -106,9 +106,6 @@ const MemberTable = ({
       cell: ({ row }) => (
         <div className="flex gap-2">
           {row.original.is_admin && <Badge variant="secondary">Admin</Badge>}
-          {row.original.is_super_admin && (
-            <Badge variant="destructive">Super Admin</Badge>
-          )}
         </div>
       ),
     },

@@ -8,8 +8,6 @@ import MemberRegistrationModal from '../../../components/admin/members/create-me
 import { Member } from '@/types/admin/members';
 import MemberTable from '@/components/admin/members/members-table';
 import { createMember, getAllMembers, updateMember } from '@/actions/members';
-import { withLoadingToast } from '@/utils';
-import { ApiResponse } from '@/types/commons';
 
 const MembersDashboard = () => {
   const [open, setOpen] = useState(false);
@@ -29,12 +27,13 @@ const MembersDashboard = () => {
     fetchMembers();
   }, []);
 
-  const handleSubmit = withLoadingToast(
-    async (data: Partial<Member>): Promise<ApiResponse> => {
-      setLoading(true);
+  const handleSubmit = async (data: Partial<Member>) => {
+    setLoading(true);
+    try {
       const result = currentMember
         ? await updateMember(data as Member)
         : await createMember(data as Member);
+      console.log(result);
 
       if (result.status === 'success' && 'data' in result) {
         setMembers((prev) =>
@@ -52,12 +51,15 @@ const MembersDashboard = () => {
       } else if (result.status === 'error' && 'message' in result) {
         toast.error(result.message);
       }
+    } catch (e) {
+      console.log(e);
+      toast.error('Something went wrong');
+    } finally {
       setLoading(false);
       setOpen(false);
       setCurrentMember(null);
-      return result;
     }
-  );
+  };
 
   return (
     <div className="p-8">

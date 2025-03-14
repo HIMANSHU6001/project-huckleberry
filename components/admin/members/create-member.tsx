@@ -65,7 +65,6 @@ const MemberRegistrationModal = ({
     caption: '',
     introduction: '',
     is_admin: false,
-    is_super_admin: false,
   };
 
   const form = useForm<MemberFormSchema>({
@@ -85,6 +84,9 @@ const MemberRegistrationModal = ({
   const handleSubmit = async (data: MemberFormSchema) => {
     try {
       const finalData = { ...data };
+
+      // typecast mobile_no to string
+      finalData.mobile_no = data.mobile_no.toString() as any;
 
       if (imageFile) {
         setUploadLoading(true);
@@ -234,6 +236,7 @@ const MemberRegistrationModal = ({
                           const value = e.target.value.replace(/\D/g, '');
                           field.onChange(value ? parseInt(value, 10) : '');
                         }}
+                        maxLength={10}
                         value={field.value === 0 ? '' : field.value}
                       />
                     </FormControl>
@@ -374,27 +377,6 @@ const MemberRegistrationModal = ({
                   </FormItem>
                 )}
               />
-
-              {/* <FormField
-                  control={form.control}
-                  name="is_super_admin"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel>Super Admin Status</FormLabel>
-                        <FormDescription>
-                          Grant super admin privileges
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                /> */}
             </div>
 
             <DialogFooter>
