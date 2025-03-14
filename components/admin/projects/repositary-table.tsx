@@ -8,6 +8,7 @@ import { publishRepos, unpublishRepos } from '@/actions/projects';
 import { withLoadingToast } from '@/utils';
 import { ApiResponse } from '@/types/commons';
 import { Search } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
 
 interface ReposPageProps {
   repos: TableRepo[];
@@ -21,12 +22,13 @@ export default function ReposPage({
   const [repos, setRepos] = useState<TableRepo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
+  const { user } = useAuth();
   useEffect(() => {
     setRepos(initialRepos);
   }, [initialRepos]);
 
   const toggleSelection = (id: string) => {
+    if (user?.role !== 'admin') return;
     setRepos((prevRepos) =>
       prevRepos.map((repo) =>
         repo.id === id ? { ...repo, isSelected: !repo.isSelected } : repo
@@ -92,13 +94,15 @@ export default function ReposPage({
             />
           </div>
 
-          <Button
-            onClick={handlePublish}
-            disabled={isLoading}
-            className="bg-gdg-blue hover:bg-gdg-blue/90 text-white rounded-full transition-all px-6 py-2 font-medium"
-          >
-            {isLoading ? 'Publishing...' : 'Publish Selected'}
-          </Button>
+          {user?.role === 'admin' && (
+            <Button
+              onClick={handlePublish}
+              disabled={isLoading}
+              className="bg-gdg-blue hover:bg-gdg-blue/90 text-white rounded-full transition-all px-6 py-2 font-medium"
+            >
+              {isLoading ? 'Publishing...' : 'Publish Selected'}
+            </Button>
+          )}
         </div>
       </div>
 

@@ -124,7 +124,7 @@ export const ProjectCard = ({ repo }: { repo: GitHubRepo }) => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                          <Avatar className="h-8 w-8 ring-2 ring-offset-1 ring-gdg-blue/20">
+                          <Avatar className="size-14 ring-2 ring-offset-1 ring-gdg-blue/20">
                             <AvatarImage
                               src={contributor.avatar_url}
                               alt={contributor.login}
@@ -133,19 +133,19 @@ export const ProjectCard = ({ repo }: { repo: GitHubRepo }) => {
                               {contributor.login.slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="flex-1 min-w-0">
+                          {/* <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate text-gdg-dark font-geist-mono">
                               {contributor.login}
                             </p>
                             <p className="text-xs text-gdg-gray">
                               {contributor.contributions} commits
                             </p>
-                          </div>
+                          </div> */}
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p className="font-geist-mono">{contributor.login}</p>
-                        <p className="text-xs text-gdg-gray">
+                        <p className="text-xs text-white font-geist-sans">
                           {contributor.contributions} contributions
                         </p>
                       </TooltipContent>

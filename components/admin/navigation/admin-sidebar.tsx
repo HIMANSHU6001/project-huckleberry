@@ -46,8 +46,14 @@ const navItems = [
     color: 'text-gdg-red',
   },
   {
-    name: 'Projects',
+    name: 'Manage Projects',
     href: '/admin/publish-projects',
+    icon: Layers,
+    color: 'text-gdg-green',
+  },
+  {
+    name: 'All Projects',
+    href: '/admin/projects',
     icon: Layers,
     color: 'text-gdg-green',
   },
