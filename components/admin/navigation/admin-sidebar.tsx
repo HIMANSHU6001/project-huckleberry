@@ -14,6 +14,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  User,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -51,9 +52,9 @@ const navItems = [
     color: 'text-gdg-green',
   },
   {
-    name: 'Settings',
-    href: '/admin/settings',
-    icon: Settings,
+    name: 'My Profile',
+    href: '/admin/profile',
+    icon: User,
     color: 'text-gray-500',
   },
 ];
@@ -69,9 +70,8 @@ export default function Sidebar({ className }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile Menu Button */}
       <Button
-        variant="ghost"
+        variant="default"
         size="icon"
         className="md:hidden fixed top-4 left-4 z-50"
         onClick={() => setMobileOpen(!mobileOpen)}
@@ -79,7 +79,6 @@ export default function Sidebar({ className }: SidebarProps) {
         <Menu className="h-5 w-5" />
       </Button>
 
-      {/* Mobile Overlay */}
       {mobileOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
@@ -87,7 +86,6 @@ export default function Sidebar({ className }: SidebarProps) {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={cn(
           'fixed top-0 left-0 z-40 h-full bg-white border-r border-gray-200 transition-all duration-300',
@@ -96,7 +94,6 @@ export default function Sidebar({ className }: SidebarProps) {
           className
         )}
       >
-        {/* Logo Area */}
         <div className="flex flex-col h-full">
           <div className="h-16 flex items-center px-4 border-b">
             {!collapsed && (
@@ -104,7 +101,9 @@ export default function Sidebar({ className }: SidebarProps) {
                 <div className="w-8 h-8 rounded-full bg-gdg-blue flex items-center justify-center">
                   <span className="text-white font-bold">G</span>
                 </div>
-                <span className="font-bold text-lg">GDSC Admin</span>
+                <span className="font-bold text-lg font-geist-sans">
+                  GDSC Admin
+                </span>
               </div>
             )}
             {collapsed && (
@@ -136,7 +135,7 @@ export default function Sidebar({ className }: SidebarProps) {
                   {!collapsed && (
                     <span
                       className={cn(
-                        'ml-3 text-sm font-medium',
+                        'ml-3 text-sm font-medium font-geist-sans',
                         isActive ? 'text-gray-900' : 'text-gray-600'
                       )}
                     >
@@ -156,18 +155,16 @@ export default function Sidebar({ className }: SidebarProps) {
             <div className="flex items-center justify-between">
               {!collapsed && (
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-600 font-medium">U</span>
-                  </div>
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium">Admin User</span>
-                    <Link
-                      href="/logout"
-                      className="flex items-center text-xs text-gray-500 hover:text-red-500"
-                    >
-                      <LogOut className="h-3 w-3 mr-1" />
-                      Log out
-                    </Link>
+                    <Button asChild variant={'ghost'} size={'lg'}>
+                      <Link
+                        href="/logout"
+                        className="flex items-center text-lg text-gray-500 hover:text-red-500 font-geist-sans"
+                      >
+                        <LogOut className="h-3 w-3 mr-1" />
+                        Log out
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               )}

@@ -4,7 +4,7 @@ export interface Member {
   profile_photo: string;
   user_name: string;
   email: string;
-  mobile_no: number;
+  mobile_no: string;
   role: string;
   github: string;
   linkedin: string;
@@ -96,7 +96,7 @@ export interface Member {
   profile_photo: string;
   user_name: string;
   email: string;
-  mobile_no: number;
+  mobile_no: string;
   role: string;
   github: string;
   linkedin: string;

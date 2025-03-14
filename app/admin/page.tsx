@@ -78,14 +78,12 @@ export default function DashboardPage() {
               }))
             : [];
 
-        const upcomingEvents = filterUpcomingEvents(events);
-
         setStats({
           totalMembers: members.length,
-          upcomingEvents: upcomingEvents.length,
+          upcomingEvents: events.length,
           tweetCount: tweetCountResponse,
           recentProjects: mapPublishedProjects(publishedProjects),
-          upcomingEventsList: mapUpcomingEvents(upcomingEvents),
+          upcomingEventsList: mapUpcomingEvents(events),
         });
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -116,7 +114,7 @@ export default function DashboardPage() {
 
         <GoogleColorsBar />
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 font-geist-sans mb-8">
+        <div className="grid gap-6 md:grid-cols-2 lxl:grid-cols-2 lg:grid-cols-4 font-geist-sans mb-8">
           <StatCard
             title="Published Projects"
             value={stats.recentProjects.length}

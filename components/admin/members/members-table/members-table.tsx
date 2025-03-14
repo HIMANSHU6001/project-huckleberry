@@ -23,7 +23,7 @@ import RoleBadge from './role-badge';
 import SocialLinks from './social-links';
 import MemberActions from './member-actions';
 import EmptyState from './empty-state';
-import { GoogleColorsBar } from '../member-form';
+import GoogleColorsBar from '@/components/shared/google-colors-bar';
 
 const MemberTable = ({
   members,

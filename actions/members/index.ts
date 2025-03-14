@@ -84,3 +84,25 @@ export async function deleteMember(id: string) {
     return handleError(error);
   }
 }
+
+export async function getMemberByEmail(email: string) {
+  try {
+    if (!email || typeof email !== 'string') {
+      console.error('Invalid email ID:', email);
+      return handleError(new Error('Valid email ID is required'));
+    }
+
+    const member = await prisma.member.findUnique({
+      where: { email: email },
+    });
+
+    if (!member) {
+      return handleError(new Error('Member not found'));
+    }
+    // @ts-ignore
+    return handleSuccess({ ...member });
+  } catch (error) {
+    console.error('Server: Error fetching member:', error);
+    return handleError(error);
+  }
+}

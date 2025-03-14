@@ -25,7 +25,7 @@ model Member {
   id             String   @id @default(cuid())
   created_at     DateTime @default(now())
   profile_photo  String?
-  user_name      String   @unique
+  user_name      String   
   email          String   @unique
   mobile_no      String
   role           String
