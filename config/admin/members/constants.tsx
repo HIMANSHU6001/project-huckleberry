@@ -37,5 +37,4 @@ export const memberSchema = z.object({
   caption: z.string().nullable().optional(),
   introduction: z.string().min(1, 'Introduction is required'),
   is_admin: z.boolean().default(false),
-  is_super_admin: z.boolean().default(false),
 });

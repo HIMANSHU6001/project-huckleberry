@@ -19,7 +19,6 @@ export async function getAllMembers() {
 
 export async function createMember(member: Member) {
   try {
-    console.log('creating member');
     const memberData = { ...member };
     if (memberData.id) {
       const existingMember = await prisma.member.findUnique({
@@ -45,7 +44,6 @@ export async function createMember(member: Member) {
 
 export async function updateMember(member: Member) {
   try {
-    console.log(member.id);
     const updatedMember = await prisma.member.update({
       where: { id: member.id },
       data: member,
@@ -66,9 +64,15 @@ export async function deleteMember(id: string) {
       return handleError(new Error('Valid member ID is required for deletion'));
     }
 
-    console.log('Server: Deleting member with ID:', id);
-
     const memberId = String(id);
+
+    const existingMember = await prisma.member.findUnique({
+      where: { id: memberId },
+    });
+
+    if (!existingMember) {
+      return handleError(new Error('Member not found'));
+    }
 
     await prisma.member.delete({
       where: { id: memberId },
