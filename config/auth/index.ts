@@ -22,3 +22,32 @@ export const formFields = [
     },
   },
 ];
+
+export const authErrors = [
+  {
+    code: 'member_not_found',
+    message:
+      'Your email is not registered in our system. Please contact your administrator.',
+  },
+  {
+    code: 'default',
+    message: 'An error occurred during login. Please try again.',
+  },
+  {
+    code: 'unauthorized',
+    message: 'You are not authorized to access this resource.',
+  },
+  {
+    code: 'access_denied',
+    message: "Access denied. You don't have permission to log in.",
+  },
+];
+
+export const getErrorMessage = (code: string): string => {
+  const error = authErrors.find((error) => error.code === code);
+  return (
+    error?.message ||
+    authErrors.find((error) => error.code === 'default')?.message ||
+    ''
+  );
+};

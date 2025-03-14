@@ -25,9 +25,9 @@ model Member {
   id             String   @id @default(cuid())
   created_at     DateTime @default(now())
   profile_photo  String?
-  user_name      String   @unique
+  user_name      String   
   email          String   @unique
-  mobile_no      Int?
+  mobile_no      String
   role           String
   github         String?
   linkedin       String?
@@ -36,7 +36,6 @@ model Member {
   caption        String?
   introduction   String
   is_admin       Boolean  @default(false)
-  is_super_admin Boolean  @default(false)
 
   @@map("members")
 }

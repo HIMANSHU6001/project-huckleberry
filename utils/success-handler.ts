@@ -1,4 +1,10 @@
-export const handleSuccess = <T extends { message: string | null }>(
+export const handleSuccess = <
+  T extends {
+    events?: any;
+    data?: unknown;
+    message: string | null;
+  },
+>(
   data: T
 ) => {
   return {

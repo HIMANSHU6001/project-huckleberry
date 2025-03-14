@@ -1,10 +1,14 @@
 'use server';
 import { prisma } from '@/lib/prisma';
 import { Event, EventRegistration } from '@/types/admin/events';
-import { handleError, handleSuccess } from '@/utils';
+import { EventOperationError, handleError, handleSuccess } from '@/utils';
+import { isAdmin, requireAdmin } from '../auth';
 
 export async function createEvent(event: EventRegistration) {
   try {
+    const adminCheck = await requireAdmin();
+    if (adminCheck !== true) return adminCheck;
+
     const eventData = {
       ...event,
       coverImage:
@@ -35,6 +39,9 @@ export async function getEvent(id: string) {
 
 export async function updateEvent(id: string, updates: Partial<Event>) {
   try {
+    const adminCheck = await requireAdmin();
+    if (adminCheck !== true) return adminCheck;
+
     const updatedEvent = await prisma.event.update({
       where: { id },
       data: {
@@ -56,6 +63,9 @@ export async function updateEvent(id: string, updates: Partial<Event>) {
 
 export async function deleteEvent(id: string) {
   try {
+    const adminCheck = await requireAdmin();
+    if (adminCheck !== true) return adminCheck;
+
     await prisma.event.delete({ where: { id } });
     return handleSuccess({ message: 'Event deleted successfully' });
   } catch (error) {

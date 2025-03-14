@@ -1,7 +1,8 @@
 'use server';
 import { prisma } from '@/lib/prisma';
-import { handleError, handleSuccess } from '@/utils';
+import { EventOperationError, handleError, handleSuccess } from '@/utils';
 import { Member } from '@/types/admin/members';
+import { getSessionUser, requireAdmin } from '../auth';
 
 export async function getAllMembers() {
   try {
@@ -19,6 +20,8 @@ export async function getAllMembers() {
 
 export async function createMember(member: Member) {
   try {
+    const adminCheck = await requireAdmin();
+    if (adminCheck !== true) return adminCheck;
     const memberData = { ...member };
     if (memberData.id) {
       const existingMember = await prisma.member.findUnique({
@@ -44,8 +47,32 @@ export async function createMember(member: Member) {
 
 export async function updateMember(member: Member) {
   try {
+    const sessionUser = await getSessionUser();
+
+    if (member.email !== sessionUser.email && !sessionUser.isAdmin) {
+      const error = new EventOperationError(
+        'You are not authorized to perform this action',
+        401
+      );
+      return handleError(error);
+    }
+
+    if (!sessionUser.isAdmin && member.is_admin) {
+      const error = new EventOperationError(
+        'You are not authorized to perform this action',
+        401
+      );
+      return handleError(error);
+    }
+    if (!member.email) {
+      return {
+        status: 'error',
+        message: 'Member Email ID is required for updates',
+      };
+    }
+
     const updatedMember = await prisma.member.update({
-      where: { id: member.id },
+      where: { email: member.email },
       data: member,
     });
     return handleSuccess({
@@ -59,6 +86,9 @@ export async function updateMember(member: Member) {
 
 export async function deleteMember(id: string) {
   try {
+    const adminCheck = await requireAdmin();
+    if (adminCheck !== true) return adminCheck;
+
     if (!id || typeof id !== 'string') {
       console.error('Invalid member ID for deletion:', id);
       return handleError(new Error('Valid member ID is required for deletion'));
@@ -81,6 +111,27 @@ export async function deleteMember(id: string) {
     return handleSuccess({ message: 'Member deleted successfully' });
   } catch (error) {
     console.error('Server: Error deleting member:', error);
+    return handleError(error);
+  }
+}
+
+export async function getMemberByEmail(email: string) {
+  try {
+    if (!email || typeof email !== 'string') {
+      return handleError(new Error('Valid email ID is required'));
+    }
+
+    const member = await prisma.member.findUnique({
+      where: { email: email },
+    });
+
+    if (!member) {
+      return handleError(new Error('Member not found'));
+    }
+    // @ts-ignore
+    return handleSuccess({ ...member });
+  } catch (error) {
+    console.error('Server: Error fetching member:', error);
     return handleError(error);
   }
 }

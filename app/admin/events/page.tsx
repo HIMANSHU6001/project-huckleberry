@@ -22,6 +22,8 @@ import {
   deleteEvent,
 } from '@/actions/events';
 import { ApiResponse } from '@/types/commons';
+import { useAuth } from '@/contexts/auth-context';
+import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 
 const EventsDashboard = () => {
   const [open, setOpen] = useState(false);
@@ -34,8 +36,8 @@ const EventsDashboard = () => {
     open: false,
     event: null,
   });
-
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleEdit = (event: Event) => {
     setOpen(true);
@@ -71,6 +73,7 @@ const EventsDashboard = () => {
         ? await updateEvent(currentEvent.id, eventData)
         : await createEvent(eventData);
 
+      console.log(result);
       if (result.status === 'success') {
         setEvents((prevEvents) =>
           upsertEvent(prevEvents, data, currentEvent?.id)
@@ -103,23 +106,30 @@ const EventsDashboard = () => {
 
   return (
     <div className="p-8 font-geist-sans">
-      <EventRegistrationModal
-        open={open}
-        onOpenChange={handleClose}
-        onSubmit={handleSubmit}
-        defaultValues={currentEvent}
-        isEditing={Boolean(currentEvent)}
-        isLoading={loading}
-      />
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Events Dashboard</h1>
-        <Button
-          className="flex items-center gap-2"
-          onClick={() => setOpen(true)}
-        >
-          <Plus className="h-4 w-4" /> Add Event
-        </Button>
+      <AdminPageHeader accentTitle="Events" title="Events" />
+      <div className="flex justify-end items-center mb-6">
+        {user?.role === 'admin' && (
+          <Button
+            className="flex items-center gap-2"
+            onClick={() => setOpen(true)}
+          >
+            <Plus className="h-4 w-4" /> Add Event
+          </Button>
+        )}
       </div>
+
+      {user?.role === 'admin' && (
+        <>
+          <EventRegistrationModal
+            open={open}
+            onOpenChange={handleClose}
+            onSubmit={handleSubmit}
+            defaultValues={currentEvent}
+            isEditing={Boolean(currentEvent)}
+            isLoading={loading}
+          />
+        </>
+      )}
 
       {events.length > 0 ? (
         <DataTable
@@ -128,6 +138,7 @@ const EventsDashboard = () => {
           data={events}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          isAdmin={user?.role === 'admin'}
         />
       ) : (
         <p className="text-center text-lg text-muted-foreground">

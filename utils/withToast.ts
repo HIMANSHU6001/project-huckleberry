@@ -12,25 +12,34 @@ export const withLoadingToast = <
   } = {}
 ) => {
   return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
-    const promise = fn(...args);
+    const toastId = toast.loading(loadingMessage);
 
-    toast.promise(promise, {
-      loading: loadingMessage,
-      success: (result) => {
-        if (result.status === 'success') {
-          return result.message || successMessage;
-        }
+    try {
+      const result = await fn(...args);
+      toast.dismiss(toastId);
 
-        throw new Error(result.message || errorMessage);
-      },
-      error: (error) => {
-        if (error instanceof Error) {
-          return error.message;
-        }
-        return error?.message || errorMessage;
-      },
-    });
+      if (result.status === 'success') {
+        toast.success(result.message || successMessage);
+      } else {
+        console.error(result);
 
-    return promise as ReturnType<T>;
+        toast.error(result.message || errorMessage);
+      }
+
+      return result as ReturnType<T>;
+    } catch (error) {
+      toast.dismiss(toastId);
+
+      console.error(error);
+
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : (error as any)?.message || errorMessage;
+
+      toast.error(errorMsg);
+
+      throw error;
+    }
   };
 };

@@ -11,10 +11,8 @@ export async function middleware(request) {
   const session = await auth();
 
   if (session && session.user && request.nextUrl.pathname === '/login') {
-    if (session.user.isAdmin) {
+    if (session.user) {
       return NextResponse.redirect(new URL('/admin', request.url));
-    } else {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }
 
@@ -26,11 +24,11 @@ export async function middleware(request) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!session.user.isAdmin) {
-      return NextResponse.redirect(new URL('/profile', request.url));
-    }
-  }
+  // if (request.nextUrl.pathname.startsWith('/admin')) {
+  //   if (!session.user.isAdmin) {
+  //     return NextResponse.redirect(new URL('/profile', request.url));
+  //   }
+  // }
 
   return NextResponse.next();
 }
