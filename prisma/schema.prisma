@@ -36,7 +36,7 @@ model Member {
   caption        String?
   introduction   String
   is_admin       Boolean  @default(false)
-
+  year_of_passing Int?
   @@map("members")
 }
 

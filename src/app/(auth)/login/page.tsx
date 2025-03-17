@@ -52,6 +52,10 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
+        <CardFooter>
+          Use the same Google account provided to DSC NIT Rourkela (Members
+          only)
+        </CardFooter>
       </Card>
     </section>
   );

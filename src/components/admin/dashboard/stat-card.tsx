@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/card';
 import Loader from '@/components/ui/loader';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
 
 export const StatCard = ({
   title,

@@ -14,7 +14,6 @@ export const DashboardListCard = ({
   title,
   color = 'gdg-blue',
   isLoading = false,
-  emptyMessage = 'No items to display',
   children,
 }: DashboardListCardProps) => {
   return (

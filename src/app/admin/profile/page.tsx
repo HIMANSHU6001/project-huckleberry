@@ -20,7 +20,6 @@ import {
   SocialLinksSection,
   PersonalInfoSection,
 } from '@/components/admin/members/member-form';
-import GoogleColorsBar from '@/components/shared/google-colors-bar';
 import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 
 type ProfileFormSchema = z.infer<typeof memberSchema>;
