@@ -1,8 +1,8 @@
 'use server';
 import { prisma } from '@/lib/prisma';
 import { Event, EventRegistration } from '@/types/admin/events';
-import { EventOperationError, handleError, handleSuccess } from '@/utils';
-import { isAdmin, requireAdmin } from '../auth';
+import { handleError, handleSuccess } from '@/utils';
+import { requireAdmin } from '../auth';
 
 export async function createEvent(event: EventRegistration) {
   try {

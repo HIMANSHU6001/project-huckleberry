@@ -2,9 +2,8 @@
 
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
-import { prisma } from './lib/prisma';
 import { User as DefaultUser } from 'next-auth';
-
+import { prisma } from '@/lib/prisma';
 declare module 'next-auth' {
   interface Session {
     user: {

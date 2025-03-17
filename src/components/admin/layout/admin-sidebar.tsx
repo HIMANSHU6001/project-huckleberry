@@ -106,7 +106,7 @@ export default function Sidebar({ className }: SidebarProps) {
             <div className="flex items-center space-x-2">
               <div className="relative w-8 h-8 rounded-full overflow-hidden">
                 <Image
-                  src="/gdg.jpg"
+                  src="/src/public/gdg.jpg"
                   alt={user?.name || 'GDSC logo'}
                   fill
                   className="object-cover"

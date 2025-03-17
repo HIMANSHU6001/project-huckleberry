@@ -13,6 +13,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+
+import { Tweet } from '@/types/admin/tweets';
+import Instructions from '@/components/admin/tweets/instructions';
+import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 import {
   fetchTweetCount,
   fetchTweetsFromDB,
@@ -20,9 +24,6 @@ import {
   handleFetchLatestTweet,
   handleFetchAllDSCTweets,
 } from '@/handlers/tweets/tweetHandlers';
-import { Tweet } from '@/types/admin/tweets';
-import Instructions from '@/components/admin/tweets/instructions';
-import AdminPageHeader from '@/components/admin/layout/admin-page-header';
 
 export default function TweetsPage() {
   const [tweets, setTweets] = useState<number>(0);

@@ -7,7 +7,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/dscnitrourkela/project-raisin">
-    <img src="public/logo.png" alt="Logo" width="400">
+    <img src="./src/public/repoCover.png" alt="Logo" width="400">
   </a>
 
   <h3 align="center">Project Huckleberry</h3>
@@ -177,5 +177,5 @@ Your appreciation makes us grow and glow up. ⭐
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[product-screenshot]: images/Compose.png
-[dsc-nitrourkela]: public/repoCover.png
+[product-screenshot]: src/public/gdg.jpg
+[dsc-nitrourkela]: src/public/repoCover.png
