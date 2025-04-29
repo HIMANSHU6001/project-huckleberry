@@ -2,9 +2,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
-
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
 
 <br />
 <p align="center">
@@ -16,6 +14,13 @@
 
   <p align="center">
     The official repository for the website of GDSC NIT Rourkela
+    <br />
+    <br />
+    <a href="#">View Live</a>
+    ·
+    <a href="https://github.com/dscnitrourkela/project-huckleberry/issues">Report Bugs</a>
+    .
+    <a href="https://github.com/dscnitrourkela/project-huckleberry/issues">Add Features</a>
   </p>
 </p>
 
@@ -108,13 +113,9 @@ To setup the project locally the steps below.
 
 ```
 
-### Contribution guidlines
+### Contribution guidlines 🎃
 
 `Contributions are welcome 🎉🎉`
-
-NOTE 1: Please abide by the [Contributing Guidelines](./CONTRIBUTING.md).
-
-NOTE 2: Please abide by the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ### Local Repository Setup
 
@@ -126,24 +127,37 @@ Please refer to the project's style and contribution guidelines for submitting p
 4.  **Push** your work back up to your fork
 5.  Submit a **Pull request** so that we can review your changes
 
+NOTE 1: Please abide by the [Contributing Guidelines](https://github.com/dscnitrourkela/project-guava-web/blob/master/CONTRIBUTING.md).
 
+NOTE 2: Please abide by the [Code of Conduct](https://github.com/dscnitrourkela/project-guava-web/blob/master/CODE_OF_CONDUCT.md).
 
 ### Running the project.
 
 The project uses Yarn and not NPM. It is strictly advised to stick with Yarn so as to avoid dependency conflicts down the line.
 
 ```
+## Checkout into the project client directory
+cd client
+
 ## Install Dependencies
 yarn install
 
-## Create a new .env file and update it take .sample.env as refrence
-
-## Setup prisma
-yarn generate && migrate
-
 ## Run the Project
-yarn dev
+yarn develop
 
+```
+
+Following are the commands to remove/add new dependencies using yarn
+
+```
+## Add a new Package
+yarn add package_name
+
+## Remove an existing Package
+yarn remove package_name
+
+## Save Package as a Dev Dependency
+yarn add -D package_name
 ```
 
 ## License
@@ -160,41 +174,8 @@ dscnitrourkela/project-huckleberry is Starware.
 This means you're free to use the project, as long as you star its GitHub repository.
 Your appreciation makes us grow and glow up. ⭐
 
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [product-screenshot]: src/public/gdg.jpg
 [dsc-nitrourkela]: src/public/repoCover.png
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://ayussh.vercel.app/"><img src="https://avatars.githubusercontent.com/u/135319056?v=4?s=100" width="100px;" alt="Ayush"/><br /><sub><b>Ayush</b></sub></a><br /><a href="https://github.com/dscnitrourkela/project-huckleberry/commits?author=ayussh-2" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Cybrite"><img src="https://avatars.githubusercontent.com/u/140698710?v=4?s=100" width="100px;" alt="Harsh"/><br /><sub><b>Harsh</b></sub></a><br /><a href="https://github.com/dscnitrourkela/project-huckleberry/commits?author=Cybrite" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/siddharth-narayan-mishra"><img src="https://avatars.githubusercontent.com/u/138509510?v=4?s=100" width="100px;" alt="siddharth"/><br /><sub><b>siddharth</b></sub></a><br /><a href="https://github.com/dscnitrourkela/project-huckleberry/commits?author=siddharth-narayan-mishra" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/swaindhruti"><img src="https://avatars.githubusercontent.com/u/92504849?v=4?s=100" width="100px;" alt="Dhrutinandan Swain"/><br /><sub><b>Dhrutinandan Swain</b></sub></a><br /><a href="https://github.com/dscnitrourkela/project-huckleberry/commits?author=swaindhruti" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://portfolioscyy.netlify.app/playground"><img src="https://avatars.githubusercontent.com/u/180634057?v=4?s=100" width="100px;" alt="Ayan"/><br /><sub><b>Ayan</b></sub></a><br /><a href="https://github.com/dscnitrourkela/project-huckleberry/commits?author=AYANscyy2" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/HIMANSHU6001"><img src="https://avatars.githubusercontent.com/u/92459082?v=4?s=100" width="100px;" alt="Himanshu Kaushik"/><br /><sub><b>Himanshu Kaushik</b></sub></a><br /><a href="https://github.com/dscnitrourkela/project-huckleberry/commits?author=HIMANSHU6001" title="Code">💻</a></td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td align="center" size="13px" colspan="7">
-        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
-          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
-        </img>
-      </td>
-    </tr>
-  </tfoot>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
