@@ -87,26 +87,26 @@ To setup the project locally the steps below.
 
 - [Yarn](https://classic.yarnpkg.com/en/docs/install/)
 
-```sh
-  npm install --global yarn
-```
+  ```sh
+    npm install --global yarn
+  ```
 
 - [Git](https://git-scm.com/downloads)
 
-```sh
-  # Homebrew
-  brew install git
-
-  # Sudo apt
-  apt-get install git
-
-  # Packman
-  pacman -S git
-
-  # Module Install (Fedora)
-  dnf install git
-
-```
+  ```sh
+    # Homebrew
+    brew install git
+  
+    # Sudo apt
+    apt-get install git
+  
+    # Packman
+    pacman -S git
+  
+    # Module Install (Fedora)
+    dnf install git
+  
+  ```
 
 ### Contribution guidlines
 
