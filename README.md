@@ -126,25 +126,54 @@ Please refer to the project's style and contribution guidelines for submitting p
 4.  **Push** your work back up to your fork
 5.  Submit a **Pull request** so that we can review your changes
 
+### Running the project
 
+The project uses Yarn as the package manager. It is strictly advised to use Yarn instead of NPM to avoid dependency conflicts.
 
-### Running the project.
+1. **Install Dependencies**
+   ```sh
+   yarn install
+   ```
 
-The project uses Yarn and not NPM. It is strictly advised to stick with Yarn so as to avoid dependency conflicts down the line.
+2. **Environment Setup**
+   - Create a new `.env` file in the root directory
+   - Copy the contents from `.sample.env` as reference
+   - Update the environment variables as needed
 
-```
-## Install Dependencies
-yarn install
+3. **Database Setup**
+   ```sh
+   # Generate Prisma Client
+   yarn generate
 
-## Create a new .env file and update it take .sample.env as refrence
+   # Run database migrations
+   yarn migrate
+   ```
 
-## Setup prisma
-yarn generate && migrate
+4. **Development Server**
+   ```sh
+   # Start the development server with Turbopack
+   yarn dev
+   ```
 
-## Run the Project
-yarn dev
+5. **Additional Commands**
+   ```sh
+   # Run linting
+   yarn lint
 
-```
+   # Fix linting issues
+   yarn lint:fix
+
+   # Check code formatting
+   yarn prettier:check
+
+   # Fix code formatting
+   yarn prettier:fix
+
+   # Open Prisma Studio (database GUI)
+   yarn studio
+   ```
+
+The development server will start at `http://localhost:3000`
 
 ## License
 
