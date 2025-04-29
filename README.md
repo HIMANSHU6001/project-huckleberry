@@ -8,7 +8,7 @@
 
 <br />
 <p align="center">
-  <a href="https://github.com/dscnitrourkela/project-raisin">
+  <a href="#">
     <img src="./src/public/repoCover.png" alt="Logo" width="400">
   </a>
 
